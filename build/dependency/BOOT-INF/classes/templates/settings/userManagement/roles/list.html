@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.settings.user_mgmt.roles}"></title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<th:block layout:fragment="content">
+    <br/>
+    <section class="panel panel-primary">
+        <header class="panel-heading">
+            <h3 class="panel-title" th:utext="#{page.settings.user_mgmt.roles}">Title</h3>
+        </header>
+        <div class="panel-body">
+            <table class="table">
+                <thead class="table table-striped">
+                    <tr>
+                        <th th:utext="#{i18n.title_title}">Title</th>
+                        <th th:utext="#{i18n.description_title}">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="role : ${roles}">
+                        <tr>
+                            <td th:utext="${role.rolename}"></td>
+                            <td th:utext="#{__${'i18n.user_role.' + role.rolename.toLowerCase() + '.desc'}__}"></td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+    </div>
+    </section>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/settings/userManagement.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

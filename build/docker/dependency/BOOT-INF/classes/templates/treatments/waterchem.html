@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.tr_title.waterchem}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theTR = /*[[${refertr}]]*/;
+        var thebranches = /*[[${referbranchlist}]]*/;
+        var allthestations = /*[[${allstationslist}]]*/;
+        var predictChartList = /*[[${refcodelist.get('PREDICTION_CHART').codeValues}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+                <div class="row col-sm-12">
+                    <p class="lead" th:utext="'<b>' + #{i18n.tr_title} + ' - ' + #{i18n.tr_title.waterchem} + '</b>'">
+                        Treatments - Water Chemistry</p>
+                </div>
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal mrgn-bttm-md"
+						role="form">
+						<div th:replace="treatments/trbase :: tr_location" />
+						<div class="row brdr-bttm mrgn-bttm-sm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.analysis_title} + ' - ' + #{i18n.tr_title.waterchem}"
+									style="color: #6A5ACD">Analysis - Water Chemistry</h5>
+							</div>
+							<table id="waterchem_table" class="mrgn-bttm-sm"
+								style="width: 100%; border-collapse: separate; border-spacing: 0 3px">
+								<thead>
+									<th class="text-center pad-right" th:utext="#{i18n.application_title}">Application</th>
+									<th class="text-center">
+										<label class="required">
+											<span class="field-name" th:utext="#{i18n.branchlentic_title}">Branch/Lentic</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+									</th>
+									<th class="text-center">
+										<label class="required">
+											<span class="field-name" th:utext="#{i18n.station_caption}">Station</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+									</th>
+									<th class="text-center">
+										<label class="required">
+											<span class="field-name" th:utext="#{i18n.sample_date_caption}">Sample Date</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+									</th>
+									<th class="text-center">
+										<label class="required">
+											<span class="field-name" th:utext="#{i18n.sample_time_caption}">Sample Time</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+									</th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-center"><input type="text"
+											class="input-sm" value="1" name="#" readonly="true" size="1" /></td>
+<!--										list="allbranches"-->
+										<td class="text-center"><label for="#"></label><input type="text" id="trBranch"
+											class="input-sm branchlist" name="trBranch"
+											required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/> <datalist
+												id="allbranches">
+												<option th:each="entry : ${referbranchlist}"
+													th:value="${entry.showText}"><input type="hidden"
+														th:attr="value=${entry.id}" /></option>
+											</datalist></td>
+<!--										list="allStations"-->
+										<td class="text-center"><label for="#"></label><input type="text" id="trStation"
+											name="trStation" class="input-sm"
+											required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/> <datalist id="allStations">
+											</datalist> <select class="input-sm fas" id="stationAdjust"
+											name="stationAdjust">
+												<option class='fas fa-equals' value="equal">&#xf52c;</option>
+												<option class='fas fa-minus' value="minus">&#xf068;</option>
+												<option class='fas fa-plus' value="plus">&#xf067;</option>
+										</select></td>
+										<td class="text-center"><label for="#"></label><input type="date"
+											class="input-sm appdate" name="#" required="required" /></td>
+										<td class="text-center"><label for="#"></label><input type="text"
+											class="input-sm sample-time" name="#" maxlength="5" minlength="5"
+											placeholder="HH:mm(24h)" required="required" th:attr="data-msg-pattern=#{i18n.time_format_24h}" /></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-expand"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-minus-sign"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+										</td>
+										<td><input type="hidden" value=""/></td>
+									</tr>
+									<tr class="clickable" hidden>
+										<td colspan="5">
+											<div class="col-md-12 col-sm-offset-1">
+												<div class="row col-md-6">
+													<label for="streamTemp_">
+														<span class="field-name" th:utext="#{i18n.stream_caption_temp_title}">Stream Temperature</span>
+													</label>
+													<br/>
+													<input type="text" class="input-sm"
+														size="4" name="streamTemp_" id="streamTemp_"
+														placeholder="" min="-99" max="99"
+														data-rule-number="true" maxlength="3" pattern="^-?[0-9]{0,2}$"/><label>&nbsp;&#8451;</label>
+
+												</div>
+												<div class="row col-md-6">
+													<label>
+														<span class="field-name" th:utext="#{i18n.tfmcon_title} + '>0.1 mg/L'">TFM Concentration>0.1 mg/L</span>
+													</label>
+													<br/>
+													<div class="radio-inline">
+														<label class="radio-inline"> <input type="radio"
+															name="optradioTfmcon_" value="no"
+															th:utext="#{i18n.no_title}" checked="checked" />
+														</label> <label class="radio-inline"> <input type="radio"
+															name="optradioTfmcon_" value="yes"
+															th:utext="#{i18n.yes_title}" />
+														</label>
+													</div>
+												</div>
+												<div class="row col-md-6">
+													<label for="disolOxy_">
+														<span class="field-name" th:utext="#{i18n.disolve_oxygen_title}">Dissolved Oxygen(DO)</span>
+													</label>
+													<br/>
+													<input type="text" class="input-sm"
+														size="4" name="disolOxy_" id="disolOxy_" placeholder=""
+														min="0" max="999.9" data-rule-number="true"
+														maxlength="5" /><label>&nbsp;mg/L</label>
+
+												</div>
+												<div class="row col-md-6">
+													<label for="ammonia_">
+														<span class="field-name" th:utext="#{i18n.ammonia_title}">Ammonia</span>
+													</label>
+													<br/>
+													<input type="text" class="input-sm" size="4"
+														name="ammonia_" id="ammonia_" placeholder="" min="0" max="999.9"
+														data-rule-number="true" maxlength="5" /><label>&nbsp;mg/L</label>
+
+												</div>
+												<div class="row col-md-6">
+													<label for="ph_">
+														<span class="field-name">pH</span>
+													</label>
+													<br/>
+													<input type="text" class="input-sm" size="4"
+														   name="ph_" id="ph_" placeholder="" min="0" max="99.99"
+														   data-rule-number="true" maxlength="5" />
+												</div>
+												<div class="row col-md-6">
+													<label for="alkaPh_">
+														<span class="field-name" th:utext="#{i18n.alkalinity_ph_title}">Alkalinity pH 4.5</span>
+													</label>
+													<br/>
+													<input type="text" class="input-sm" size="4"
+														name="alkaPh_" id="alkaPh_" placeholder="" min="0" max="999.9"
+														data-rule-number="true" maxlength="5" /><label>&nbsp;mg/L</label>
+												</div>
+												<div class="row col-md-6">
+													<label for="predChart_">
+														<span class="field-name" th:utext="#{i18n.predchart_title}">Prediction Chart</span>
+													</label>
+													<br/>
+													<select class="input-sm" name="predChart_" id="predChart_">
+														<option value=""></option>
+														<option
+															th:each="entry : ${refcodelist.get('PREDICTION_CHART').codeValues}"
+															th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+													</select>
+												</div>
+												<div class="row col-md-6">
+													<label for="phMlc_">
+														<span class="field-name" th:utext="#{i18n.ph_mlc_title}">pH Minimum Lethal Concentration</span>
+													</label>
+													<br/>
+													<input type="text"
+														class="input-sm" size="4" name="phMlc_" id="phMlc_"
+														placeholder="" min="0" max="99.9" data-rule-number="true"
+														maxlength="4" />
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div th:replace="layout/base :: common_flow_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_TREATMENTS')}__})" />
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/treatments/waterchem.js}"></script>
+	</th:block>
+</body>
+</html>

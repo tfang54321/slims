@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.stations_title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<div class="col-md-12">
+					<div id="section_title">
+						<p class="lead" th:utext="'<b>' + #{i18n.stations_title} + '</b>'">
+							stations</p>
+					</div>
+					<div id="stream_lake_branchlentic">
+						<p id="input_lake">
+							<b th:utext="#{i18n.lake_caption} + ' '">Lake: </b>
+							<mark th:utext="${referlake.showText}" class="bg-info">#</mark>
+						</p>
+						<input type="hidden" value="#" id="referlake_id"
+                            th:attr="value=${referlake != null} ? ${referlake.id}"/>
+						<p id="input_stream">
+							<b th:utext="#{i18n.stream_caption} + ' '">Stream: </b>
+							<mark th:utext="${referstream.showText}" class="bg-info">#</mark>
+						</p>
+						<input type="hidden" value="#" id="referstream_id"
+                            th:attr="value=${referstream != null} ? ${referstream.id}"/>
+						<p id="input_branchlentic">
+							<b th:utext="#{i18n.branchlentic_caption} + ' '">Branch: </b>
+							<mark th:utext="${refBranchLentic.showText}" class="bg-info">#</mark>
+						</p>
+						<input type="hidden" value="#" id="referbranchlentic_id"
+						    th:attr="value=${refBranchLentic.id}" />
+					</div>
+					<table id="station_list_table"
+						class="wb-tables table list-table table-hover table-bordered"
+						style="width: 100%">
+						<thead>
+							<tr>
+								<th th:utext="#{i18n.station_code_title}">station Code</th>
+								<th th:utext="#{i18n.description_title}">station description
+								</th>
+								<th th:utext="#{i18n.latitude_title}">latitude</th>
+								<th th:utext="#{i18n.longitude_title}">longitude</th>
+								<th th:utext="#{i18n.datum_title}">datum</th>
+								<th th:utext="#{i18n.utmzone_title}">utmzone</th>
+								<th th:utext="#{i18n.utmeasting_title}">utmeasting</th>
+								<th th:utext="#{i18n.utmnorthing_title}">utmnorthing</th>
+								<th></th>
+							</tr>
+						</thead>
+					</table>
+					<div id="displayInfoMessage"></div>
+					<div>
+						<div th:replace="layout/base :: loc_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_LOCATIONS')}__})" />
+						<div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+							<button id="button_reach" type="button"
+								class="btn btn-primary mrgn-lft-sm"
+								th:utext="#{i18n.button_assign_reaches_caption}">Assign
+								to Reaches</button>
+						</div>
+					</div>
+				</div>
+				<div id="station_form" hidden="true"
+					class="col-md-12 brdr-tp mrgn-tp-md mrgn-bttm-sm mrgn-lft-sm mrgn-rght-sm background-light">
+					<h4 th:utext="#{i18n.add_edit_station_title}">Add/Edit Station</h4>
+
+					<div class="wb-frmvld">
+						<form id="edit_form" class="form-horizontal mrgn-tp-md"
+							role="form">
+							<div class="row">
+								<div class="col-md-6">
+									<input type="hidden" value="#" id="station_id" />
+									<div class="form-group pad-left-col">
+										<label for="stationCode" class="required">
+											<span class="field-name" th:utext="#{i18n.code_caption}">Code</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+										<br />
+										<input type="text"
+											class="input-sm" id="stationCode" name="stationCode"
+											placeholder="" required="required" maxlength="4"
+											data-rule-alphanumeric="true" pattern="^[A-Za-z0-9]{1,4}$" />
+									</div>
+									<div class="form-group pad-left-col">
+										<label for="description" class="required">
+											<span class="field-name" th:utext="#{i18n.description_title}">description</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+										<br />
+										<input
+											type="text" class="input-sm pull-left" id="description"
+											name="description" placeholder="" required="required"
+											maxlength="45" />
+									</div>
+									<div class="form-group pad-left-col">
+										<label for="latDeg">
+											<span class="field-name" th:utext="#{i18n.station_latitude_caption}">Latitude</span>
+										</label>
+										<br />
+										<input
+											type="text" data-rule-number="true" data-rule-range="[40,50]"
+											class="input-sm pull-left" id="latDeg" name="latDeg"
+											placeholder="" />
+									</div>
+									<div class="form-group pad-left-col">
+										<label for="longDeg">
+											<span class="field-name" th:utext="#{i18n.station_longitude_caption}">longitude</span>
+										</label>
+										<br />
+										<input
+											type="text" data-rule-number="true" data-rule-range="[-95,95]"
+											class="input-sm pull-left" id="longDeg" name="longDeg"
+											placeholder="" />
+									</div>
+									<div class="form-group pad-left-col mrgn-bttm-lg">
+										<label for="mapDatum"
+											th:utext="#{i18n.datum_title}">mapDatum</label>
+										<br />
+										<select
+											class="input-sm" id="mapDatum"
+											th:attr="name=${refcodelist.get('MAP_DATUM').codeType}">
+											<option
+												th:each="entry : ${refcodelist.get('MAP_DATUM').codeValues}"
+												th:value="${entry.codeName}" th:utext="${entry.showText}"
+												th:attr="selected=${entry.codeName == 'WGS-84'} ? true"></option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group pad-left-col">
+										<label for="utmZone" th:utext="#{i18n.utmzone_title}">utmZone</label>
+										<br />
+										<select
+											class="input-sm" id="utmZone"
+											th:attr="name=${refcodelist.get('UTM_ZONE').codeType}">
+											<option value="" th:utext="#{i18n.default.select}">Select
+												One...</option>
+											<option
+												th:each="entry : ${refcodelist.get('UTM_ZONE').codeValues}"
+												th:value="${entry.codeName}" th:utext="${entry.showText}"
+												th:attr="selected=${entry.codeName == 'UTMZone15'} ? true"></option>
+										</select>
+									</div>
+									<div class="form-group pad-left-col">
+										<label for="utmBand"
+											th:utext="#{i18n.utmzone_band_caption}">utmBand</label>
+										<br />
+										<select
+											class="input-sm" id="utmBand"
+											th:attr="name=${refcodelist.get('UTM_BAND').codeType}">
+											<option value="" th:utext="#{i18n.default.select}">Select
+												One...</option>
+											<option
+												th:each="entry : ${refcodelist.get('UTM_BAND').codeValues}"
+												th:value="${entry.codeName}" th:utext="${entry.showText}"
+												th:attr="selected=${entry.codeName == 'T-UTM Zone Band'} ? true"></option>
+										</select>
+									</div>
+									<div class="form-group pad-left-col">
+										<label for="utmEasting">
+											<span class="field-name" th:utext="#{i18n.easting_caption}">utmEasting</span>
+										</label>
+										<br />
+										<input
+											type="text" data-rule-number="true" data-rule-range="[250000,750000]"
+											class="input-sm pull-left" id="utmEasting" name="utmEasting"
+											maxlength="6" placeholder="" />
+									</div>
+									<div class="form-group pad-left-col mrgn-bttm-lg">
+										<label for="utmNorthing">
+											<span class="field-name" th:utext="#{i18n.northing_caption}">utmNorthing</span>
+										</label>
+										<br />
+										<input
+											type="text" data-rule-number="true" data-rule-range="[4500000,5500000]"
+											class="input-sm pull-left" id="utmNorthing" name="utmNorthing"
+											maxlength="7" placeholder="" />
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div th:replace="layout/base :: loc_form_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__})" />
+								</div>
+							</div>
+<!--							<div class="form-group">-->
+<!--								<label for="description"-->
+<!--									class="col-sm-3 control-label pull-left required"-->
+<!--									th:utext="#{i18n.description_title}">description</label> <input-->
+<!--									type="text" class="input-sm pull-left" id="description"-->
+<!--									name="description" placeholder="" required="required"-->
+<!--									maxlength="45" />-->
+<!--							</div>-->
+<!--							<div class="form-group">-->
+<!--								<label for="latDeg" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.station_latitude_caption}">Latitude</label> <input-->
+<!--									type="text" data-rule-number="true" min="40" max="50"-->
+<!--									class="input-sm pull-left" id="latDeg" name="latDeg"-->
+<!--									placeholder="" />-->
+<!--							</div>-->
+<!--							<div class="form-group">-->
+<!--								<label for="longDeg" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.station_longitude_caption}">longitude</label> <input-->
+<!--									type="text" data-rule-number="true" min="-95" max="95"-->
+<!--									class="input-sm pull-left" id="longDeg" name="longDeg"-->
+<!--									placeholder="" />-->
+<!--							</div>-->
+<!--							<div class="form-group">-->
+<!--								<label for="mapDatum" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.datum_title}">mapDatum</label> <select-->
+<!--									class="input-sm" id="mapDatum"-->
+<!--									th:attr="name=${refcodelist.get('MAP_DATUM') != null} ? ${refcodelist.get('MAP_DATUM').codeType}">-->
+<!--									<option-->
+<!--										th:each="entry : ${refcodelist.get('MAP_DATUM') != null} ? ${refcodelist.get('MAP_DATUM').codeValues}"-->
+<!--										th:value="${entry != null} ? ${entry.codeName}" th:utext="${entry != null} ? ${entry.showText}"-->
+<!--										th:attr="selected=${entry != null && entry.codeName == 'WGS-84'} ? true"></option>-->
+<!--								</select>-->
+<!--							</div>-->
+
+<!--							<div class="form-group">-->
+<!--								<label for="utmZone" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.utmzone_title}">utmZone</label> <select-->
+<!--									class="input-sm" id="utmZone"-->
+<!--									th:attr="name=${refcodelist.get('UTM_ZONE') != null} ? ${refcodelist.get('UTM_ZONE').codeType}">-->
+<!--									<option value="" th:utext="#{i18n.default.select}">Select-->
+<!--										One...</option>-->
+<!--									<option-->
+<!--										th:each="entry : ${refcodelist.get('UTM_ZONE') != null} ? ${refcodelist.get('UTM_ZONE').codeValues}"-->
+<!--										th:value="${entry != null} ? ${entry.codeName}" th:utext="${entry != null} ? ${entry.showText}"-->
+<!--										th:attr="selected=${entry != null && entry.codeName == 'UTMZone15'} ? true"></option>-->
+<!--								</select>-->
+<!--							</div>-->
+<!--							<div class="form-group">-->
+<!--								<label for="utmBand" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.utmzone_band_caption}">utmBand</label> <select-->
+<!--									class="input-sm" id="utmBand"-->
+<!--									th:attr="name=${refcodelist.get('UTM_BAND') != null} ? ${refcodelist.get('UTM_BAND').codeType}">-->
+<!--									<option value="" th:utext="#{i18n.default.select}">Select-->
+<!--										One...</option>-->
+<!--									<option-->
+<!--										th:each="entry : ${refcodelist.get('UTM_BAND') != null} ? ${refcodelist.get('UTM_BAND').codeValues}"-->
+<!--										th:value="${entry != null} ? ${entry.codeName}" th:utext="${entry != null} ? ${entry.showText}"-->
+<!--										th:attr="selected=${entry != null && entry.codeName == 'T-UTM Zone Band'} ? true"></option>-->
+<!--								</select>-->
+<!--							</div>-->
+<!--							<div class="form-group">-->
+<!--								<label for="utmEasting" class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.easting_caption}">utmEasting</label> <input-->
+<!--									type="text" data-rule-number="true" min="250000" max="750000"-->
+<!--									class="input-sm pull-left" id="utmEasting" name="utmEasting"-->
+<!--									placeholder="" />-->
+<!--							</div>-->
+<!--							<div class="form-group mrgn-bttm-lg">-->
+<!--								<label for="utmNorthing"-->
+<!--									class="col-sm-3 control-label pull-left"-->
+<!--									th:utext="#{i18n.northing_caption}">utmNorthing</label> <input-->
+<!--									type="text" data-rule-number="true" min="4500000" max="5500000"-->
+<!--									class="input-sm pull-left" id="utmNorthing" name="utmNorthing"-->
+<!--									placeholder="" />-->
+<!--							</div>-->
+<!--							<div th:replace="layout/base :: loc_form_buttons" />-->
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/stations/app.js}" type="text/javascript"></script>
+	</th:block>
+</body>
+</html>

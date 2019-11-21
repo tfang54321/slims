@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.stream_captions_title}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <div class="col-md-12">
+                <div id="section_title">
+                    <p class="lead" th:utext="'<b>' + #{i18n.stream_captions_title} + '</b>'">
+                        Streams</p>
+                </div>
+                <div id="stream_lake">
+                    <p id="input_lake">
+                        <b th:utext="#{i18n.lake_caption} + ' '">Lake: </b>
+                        <mark th:utext="${referlake.showText}" class="bg-info">#</mark>
+                    </p>
+                    <input type="hidden" value="#" id="referlake_id"
+                       th:attr="value=${referlake != null} ? ${referlake.id}"/>
+                </div>
+                <table id="stream_list_table"
+                       class="wb-tables table list-table table-hover table-bordered"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th th:utext="#{i18n.stream_caption_code_title}">stream Code</th>
+                        <th th:utext="#{i18n.en_name_caption}">stream En Name</th>
+                        <th th:utext="#{i18n.fr_name_caption}">stream Fr Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="displayInfoMessage"></div>
+                <div>
+                    <div th:replace="layout/base :: loc_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_LOCATIONS')}__})"/>
+                    <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+                        <button id="button_reach" type="button"
+                                class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+                                th:utext="#{i18n.reaches_title}">Reaches
+                        </button>
+                        <button id="button_branchlentic" type="button"
+                                class="btn btn-primary mrgn-lft-sm"
+                                th:utext="#{i18n.button_branchlentics_caption}">BranchLentics
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="stream_form" hidden="true"
+                 class="wb-frmvld col-md-12 brdr-tp mrgn-tp-md mrgn-bttm-sm mrgn-lft-sm mrgn-rght-sm background-light">
+                <h4 th:utext="#{i18n.add_edit_stream_title}">Add/Edit Stream</h4>
+                <form id="edit_form" class="form-horizontal mrgn-tp-md" role="form">
+                    <input type="hidden" value="#" id="stream_id"/>
+                    <div class="form-group pad-left-col">
+                        <label for="streamCode" class="required">
+                            <span class="field-name" th:utext="#{i18n.code_caption}">Code *</span>
+                            <strong class="required" th:utext="#{form.required}"></strong>
+                        </label>
+                        <br />
+                        <input
+                            type="text" class="input-sm" id="streamCode"
+                            data-rule-digits="true" name="streamCode" placeholder=""
+                            required="required" maxlength="4" pattern="^[0-9]{1,4}$"/>
+                    </div>
+                    <div class="form-group pad-left-col">
+                        <label for="nameEn" class="required">
+                            <span class="field-name" th:utext="#{i18n.en_name_caption}">English name</span>
+                            <strong class="required" th:utext="#{form.required}"></strong>
+                        </label>
+                        <br />
+                        <input
+                            type="text" class="input-sm pull-left" id="nameEn"
+                            name="nameEn" placeholder="" required="required"
+                            maxlength="45"/>
+                    </div>
+                    <div class="form-group pad-left-col mrgn-bttm-lg">
+                        <label for="nameFr" class="required">
+                            <span class="field-name" th:utext="#{i18n.fr_name_caption}">French name</span>
+                            <strong class="required" th:utext="#{form.required}"></strong>
+                        </label>
+                        <br />
+                        <input
+                                type="text" class="input-sm pull-left" id="nameFr"
+                                name="nameFr" placeholder="" required="required"
+                                maxlength="45"/>
+                    </div>
+                    <div th:replace="layout/base :: loc_form_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__})"/>
+                </form>
+            </div>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/streams/app.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

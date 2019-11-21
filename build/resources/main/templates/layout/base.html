@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html class="no-js" th:lang="${pageLang.substring(0, 2)}" dir="ltr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+    </head>
+    <body>
+        <div th:fragment="shared_css" th:remove="tag">
+            <link rel="stylesheet" th:href="@{/css/app.css}"/>
+            <link rel="stylesheet"
+                  href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+                  integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+                  crossorigin="anonymous">
+        </div>
+        <div th:fragment="shared_controls" th:remove="tag">
+            <div id="loader" class="loader"></div>
+            <div id="winmask" class="maskLayer"></div>
+            <div id="slimMsgBox" class="msgBox">
+                <div
+                        class="lbx-modal mrgn-tp-lg mrgn-bttm-lg mrgn-rght-lg mrgn-lft-lg">
+                    <br/>
+                    <p class="text-center">Placeholder: Successful</p>
+                    <br/>
+                </div>
+            </div>
+            <div id="confirmBox" class="confBox">
+                <section id="confirm-modal" class="modal-dialog modal-content overlay-def">
+                    <header class="modal-header">
+                        <h2 class="modal-title"></h2>
+                    </header>
+                    <div class="modal-body">
+                        <p></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="confirmYes" th:utext="#{i18n.yes_title}"></button>
+                        <button type="button" class="btn btn-default popup-modal-dismiss" id="confirmNo" th:utext="#{i18n.no_title}"></button>
+                    </div>
+                </section>
+<!--                <div class="lbx-modal">-->
+<!--                    <div-->
+<!--                            class="row brdr-bttm mrgn-tp-md mrgn-bttm-md mrgn-rght-lg mrgn-lft-lg">-->
+<!--                        <p>Placeholder: Confirm</p>-->
+<!--                    </div>-->
+
+<!--                    <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-lg mrgn-lft-lg">-->
+<!--                        <button type="button" id="confirmYes"-->
+<!--                                class="mrgn-rght-md dialogButton" th:utext="#{i18n.yes_title}"></button>-->
+<!--                        <button type="button" id="confirmNo"-->
+<!--                                class="mrgn-lft-md dialogButton" th:utext="#{i18n.no_title}"></button>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+        <div th:fragment="loc_edit_buttons" th:remove="tag" th:with="addEnabled=${true},deleteEnabled=${true}">
+            <div class="pull-left mrgn-tp-md mrgn-bttm-sm">
+                <button id="button_add" type="button"
+                        class="btn btn-success mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_add_caption}" th:disabled="${not addEnabled}">Add
+                </button>
+                <button id="button_edit" type="button"
+                        class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_edit_caption}">Edit
+                </button>
+                <button id="button_delete" type="button"
+                        class="btn btn-warning mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_delete_caption}" th:disabled="${not deleteEnabled}">Delete
+                </button>
+            </div>
+        </div>
+        <div th:fragment="loc_form_buttons" th:remove="tag" th:with="saveEnabled=${true}">
+            <div class="form-group mrgn-lft-lg">
+                <button type="submit" id="button_save"
+                        class="btn btn-success mrgn-lft-md mrgn-rght-md"
+                        th:utext="#{i18n.button_save_caption}" th:disabled="${not saveEnabled}">Save
+                </button>
+                <button type="button" id="button_cancel"
+                        class="btn btn-warning mrgn-lft-md mrgn-rght-md"
+                        th:utext="#{i18n.button_cancel_caption}">Cancel
+                </button>
+                <button type="button" id="button_reset"
+                        class="btn btn-primary mrgn-lft-md mrgn-rght-md"
+                        th:utext="#{i18n.button_reset_caption}">Reset
+                </button>
+            </div>
+        </div>
+        <div th:fragment="common_edit_buttons" th:remove="tag" th:with="addEnabled=${true},deleteEnabled=${true}">
+            <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+                <button id="button_add" type="button"
+                        class="btn btn-success mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_add_caption}" th:disabled="${not addEnabled}">Add
+                </button>
+                <button id="button_edit" type="button"
+                        class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_edit_caption}">Edit
+                </button>
+                <button id="button_delete" type="button"
+                        class="btn btn-warning mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_delete_caption}" th:disabled="${not deleteEnabled}">Delete
+                </button>
+            </div>
+        </div>
+        <div th:fragment="common_edit_offline_buttons" th:remove="tag">
+            <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+                <button id="button_add_offline" type="button"
+                        class="btn btn-success mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_add_caption}">Add
+                </button>
+                <button id="button_edit_offline" type="button"
+                        class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_edit_caption}">Edit
+                </button>
+                <button id="button_delete_offline" type="button"
+                        class="btn btn-warning mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_delete_caption}">Delete
+                </button>
+            </div>
+        </div>
+        <div th:fragment="offline_buttons" th:remove="tag">
+            <button type="button" id="button_showonline" hidden
+                    class="btn btn-default pull-right mrgn-rght-sm mrgn-lft-sm"
+                    th:utext="#{i18n.button_showonline_caption}">Show Online Data
+            </button>
+            <button type="button" id="button_sync" hidden
+                    class="btn btn-default pull-right mrgn-lft-sm"
+                    th:utext="#{i18n.button_sync_caption}">Sync to Server
+            </button>
+        </div>
+        <div th:fragment="common_flow_buttons" th:remove="tag" th:with="saveEnabled=${true}">
+            <div class="row pull-left mrgn-tp-sm mrgn-left-lg mrgn-bttm-sm">
+                <button id="button_save" type="button"
+                        class="btn btn-success mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_save_caption}" th:disabled="${not saveEnabled}">Save
+                </button>
+                <button id="button_continue" type="button"
+                        class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_continue_caption}">Continue
+                </button>
+                <button id="button_exit" type="button"
+                        class="btn btn-primary mrgn-lft-sm mrgn-rght-sm pull-left"
+                        th:utext="#{i18n.button_exit_caption}">Exit
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

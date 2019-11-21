@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.tr.secondaryapp.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theTR = /*[[${refertr}]]*/;
+        var thebranches = /*[[${referbranchlist}]]*/;
+        var allthestations = /*[[${allstationslist}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+    <th:block layout:fragment="content">
+        <div class="container">
+            <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+                <div class="row col-sm-12">
+                    <p class="lead" th:utext="'<b>' + #{i18n.tr_title} + ' - ' + #{page.tr.secondaryapp.title} + '</b>'">
+                        Treatments - Secondary Application</p>
+                </div>
+                <div class="wb-frmvld col-md-12">
+                    <form id="edit_form" class="form-horizontal mrgn-bttm-md" role="form">
+                        <div th:replace="treatments/trbase :: tr_location" />
+                        <div class="row brdr-bttm mrgn-bttm-md">
+                            <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                                <h5 class="remove_margin" th:utext="#{page.tr.secondaryapp.title}" style="color: #6A5ACD">Secondary
+                                    Application</h5>
+                            </div>
+                            <table id="secondary_app_table"
+                                class=" mrgn-bttm-sm"
+                                style="width: 100%; border-collapse: separate; border-spacing: 0 15px">
+                                <thead>
+                                    <th class="text-center pad-right" th:utext="#{i18n.application_title}">Application</th>
+                                    <th class="text-center">
+                                        <label class="required">
+                                            <span class="field-name" th:utext="#{i18n.branchlentic_from_title}">Branch/Lentic</span>
+                                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                        </label>
+                                    </th>
+                                    <th class="text-center">
+                                        <label class="required">
+                                            <span class="field-name" th:utext="#{i18n.stationfrom_caption}">Station From</span>
+                                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                        </label>
+                                    </th>
+                                    <th class="text-center">
+                                        <label class="required">
+                                            <span class="field-name" th:utext="#{i18n.tr_date_caption}">Treatment Date</span>
+                                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                        </label>
+                                    </th>
+                                    <th class="text-center">
+                                        <label class="required">
+                                            <span class="field-name" th:utext="#{i18n.time_start_caption}">Time Start</span>
+                                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                        </label>
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="text" id="applicationId" class="input-sm" name="applicationId"
+                                                   readonly="true" size="2" />
+                                        </td>
+                                        <td class="text-center">
+<!--                                            list="allbranches"-->
+                                            <label for="trBranch_from"></label>
+                                            <input type="text" id="trBranch_from" class="input-sm branchlist"
+                                                   name="trBranch_from" required="required"
+                                                   data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                            <datalist id="allbranches">
+                                                <option th:each="entry : ${referbranchlist}"
+                                                        th:value="${entry.showText}">
+                                                    <input type="hidden" th:attr="value=${entry.id}" />
+                                                </option>
+                                            </datalist>
+                                        </td>
+                                        <td class="text-center">
+<!--                                            list="allFromStations"-->
+                                            <label for="trStationFrom"></label>
+                                            <input type="text" id="trStationFrom" name="trStationFrom" class="input-sm"
+                                                   required="required"
+                                                   data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                            <datalist id="allFromStations" ></datalist>
+                                            <select class=" input-sm fas" id="stationFromAdjust" name="stationFromAdjust">
+                                                <option class='fas fa-equals' value="equal">&#xf52c;</option>
+                                                <option class='fas fa-minus' value="minus">&#xf068;</option>
+                                                <option class='fas fa-plus' value="plus">&#xf067;</option>
+                                            </select>
+                                        </td>
+                                        <td class="text-center">
+                                            <label for="#"></label>
+                                            <input type="date" class="input-sm appdate" name="#" required="required" />
+                                        </td>
+                                        <td class="text-center">
+                                            <label for="#"></label>
+                                            <input type="text" class="input-sm time-start" name="#"
+                                                   maxlength="5" minlength="5" placeholder="HH:mm(24h)"
+                                                   required="required" th:attr="data-msg-pattern=#{i18n.time_format_24h}" />
+                                        </td>
+                                        <td class="text-center icon">
+                                            <a href="#" role="button">
+                                                <span style="font-size: 1.3em;" class="glyphicon glyphicon-edit"
+                                                      aria-hidden="true"></span>
+                                            </a>
+                                        </td>
+                                        <td class="text-center icon">
+                                            <a href="#" role="button">
+                                                <span style="font-size: 1.3em;" class="glyphicon glyphicon-minus-sign"
+                                                      aria-hidden="true"></span>
+                                            </a>
+                                        </td>
+                                        <td class="text-center icon">
+                                            <a href="#" role="button">
+                                                <span style="font-size: 1.3em;" class="glyphicon glyphicon-plus-sign"
+                                                      aria-hidden="true"></span>
+                                            </a>
+                                        </td>
+                                        <td><input type="hidden" value=""/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="displayMessage"></div>
+            <div th:replace="layout/base :: common_flow_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_TREATMENTS')}__})" />
+            <div th:replace="layout/base :: shared_controls" />
+        </div>
+    </th:block>
+    <!--     Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        
+        <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+        <script th:src="@{/js/treatments/secondaryapp.js}"></script>
+    </th:block>
+</body>
+</html>

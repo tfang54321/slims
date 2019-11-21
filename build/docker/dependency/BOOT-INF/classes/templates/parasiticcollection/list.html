@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.pc_title}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <div class="col-md-12">
+                <div id="section_title">
+                    <p class="lead" th:utext="'<b>' + #{i18n.pc_title} + '</b>'">
+                        Adult Assessments</p>
+                </div>
+                <div class="row col-sm-6 mrgn-bttm-sm">
+                    <button id="btnRefresh" class="btn btn-default">
+                        <span th:utext="#{i18n.refresh}">Refresh</span> <span class="glyphicon glyphicon-refresh"></span>
+                    </button>&nbsp;
+                    <label for="filterYear" th:utext="#{i18n.pc.date_collected}">Year</label>&nbsp;
+                    <select id="yearAdjust">
+									<option value="equal">&#61;</option>
+									<option value="gte">&#62;&#61;</option>
+									<option value="lte">&#60;&#61;</option>
+					</select>
+                    <select id="filterYear">
+                        <option value="all" th:utext="#{i18n.all_title}">All</option>
+                        <th:block th:each="year : ${pcYear}">
+                            <option th:value="${year}" th:utext="${year}">####</option>
+                        </th:block>                        
+                    </select>
+                </div>
+                <div class="row">
+                    <table id="pc_list_table"
+                           class="wb-tables table list-table table-hover table-bordered"
+                           style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th th:utext="#{i18n.sample_code_caption}">Sample Id</th>
+                            <th th:utext="#{i18n.statistical_district_title}">Statistical District</th>
+                            <th th:utext="#{i18n.fisher_name_title}">Fisher's Name</th>
+                            <th th:utext="#{i18n.sample_status_title}">Status</th>
+                            <th th:utext="#{i18n.collected_date_title}">Date Collected</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                    <div id="displayInfoMessage"></div>
+                    <div th:replace="layout/base :: common_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_PARASITIC_COLLECTIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_PARASITIC_COLLECTIONS')}__})" />
+                </div>
+            </div>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/parasiticcollection/app.js}"></script>
+</th:block>
+</body>
+</html>

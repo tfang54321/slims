@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.pc_title.attachments}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var thePC = /*[[${referpc}]]*/'';
+        var speciecodesList = /*[[${allspeciecodeslist}]]*/'';
+        var hostTypeList = /*[[${refcodelist.get('HOST_TYPE').codeValues}]]*/'';
+        var fishSexList = /*[[${refcodelist.get('SEX').codeValues}]]*/'';
+        var spawConditionList = /*[[${refcodelist.get('MATURITY').codeValues}]]*/'';
+        var gutConditionList = /*[[${refcodelist.get('GUT_CONDITION').codeValues}]]*/'';
+        var gutFullNessList = /*[[${refcodelist.get('GUT_FULLNESS').codeValues}]]*/'';
+        var gutContentsList = /*[[${refcodelist.get('GUT_CONTENTS').codeValues}]]*/'';
+        var speciemenStateList = /*[[${refcodelist.get('SPECIMEN_STATE').codeValues}]]*/'';
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referpc_id"
+					th:attr="value=${referpc != null} ? ${referpc.id} : '#'" />
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal mrgn-bttm-md"
+						role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-md-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.pc_title} + ' - ' + #{i18n.pc_title.attachments} + '</b>'">
+										Parasitic Collections - Attachments</p>
+								</div>
+								<div class="col-sm-6">
+									<label>
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${referpc != null} ? ${referpc.sample.sampleCode}"
+										readonly="true" />
+								</div>
+								<div class="col-sm-5">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${referpc != null} ? ${referpc.sample.sampleStatus}"
+										readonly="true">
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm mrgn-bttm-lg">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.pc_title.attachments}"
+									style="color: #6A5ACD">Attachments</h5>
+							</div>
+							<table id="attachments_table"
+								class=" mrgn-bttm-sm"
+								style="width: 100%; border-collapse: separate; border-spacing: 0 10px">
+								<thead>								
+									<th class="text-center"><label class="required"><span
+                                    th:utext="#{i18n.idnumber_title}">ID
+										Number</span> <strong
+                                    class="required" th:utext="#{form.required}">(required)</strong></label></th>
+                                    <th class="text-center"><label class="required"><span
+                                    th:utext="#{i18n.lamprey_attachto_title}">Lampreys Were
+										Attached to</span> <strong
+                                    class="required" th:utext="#{form.required}">(required)</strong></label></th>									
+									<th class="text-center" th:utext="#{i18n.hostspecies_title}">Host
+										Species(if applicable)</th>
+									<th class="text-center"
+										th:utext="#{i18n.sea_lamprey_sampled_title}">Sea
+										Lamprey(PM) Sampled</th>
+									<th class="text-center"
+										th:utext="#{i18n.silver_lamprey_sampled_title}">Silver
+										Lamprey Sampled</th>
+									<th class="text-center" th:utext="#{i18n.total_attached_title}">Total
+										Attached</th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</thead>
+								<tbody>
+									<tr class="attachment">
+										<td class="text-center"><label for="#"></label><input type="text" class="input-sm" size="4" required="required"
+											name="#" value="" data-rule-digits="true" maxlength="5" /></td>
+										<td class="text-center"><label for="#"></label><select class="input-sm" id="myid" required="required"
+											th:attr="name=${refcodelist.get('HOST_TYPE').codeType}">
+												<option value=""></option>
+												<option
+													th:each="entry : ${refcodelist.get('HOST_TYPE').codeValues}"
+													th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+										</select></td>
+										<td class="text-center"><input type="text" id="myid"
+											name="pcspecies" class="input-sm" list="allspecies" data-ap-auto-select-first="true"/> <datalist
+												id="allspecies">
+												<option th:each="entry : ${allspeciecodeslist}"
+													th:value="${entry.showText}"><input type="hidden"
+														th:attr="value=${entry.id}" />
+												</option>
+											</datalist></td>
+										<td class="text-center"><label for="#"></label><input type="text" class="input-sm" size="4" 
+											name="#" value="0" data-rule-digits="true"
+											maxlength="4" /></td>
+										<td class="text-center"><label for="#"></label><input type="text" class="input-sm" size="4"
+											name="#" value="0" data-rule-digits="true"
+											maxlength="4" placeholder="" /></td>
+										<td class="text-center"><label for="#"></label><input type="text" class="input-sm" size="4"
+											name="#" value="0" data-rule-digits="true"
+											maxlength="4" placeholder="" /></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-expand"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-minus-sign"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+										</td>
+										<td><input type="hidden" value="" /></td>
+									</tr>
+									<tr class="clickable" hidden>
+										<td colspan="5">
+											<div class="row col-md-12 col-sm-offset-1">
+												<table id="individual_table" style="width: 90%; border-collapse: separate; border-spacing: 0 5px">
+													<thead>
+														<tr>
+															<th class="text-center"
+																th:utext="#{i18n.individuals_title}">Individuals</th>
+															<th class="text-center required" th:utext="#{i18n.species_code_title}">Species Code</th>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr class="individual">
+															<td class="text-center"><input type="text"
+																class="input-sm" value="1" name="#" readonly="true"
+																size="1" /></td>
+															<td class="text-center"><label for="#"></label><input type="text" required="required" id="myid" name="thespecies" class="input-sm" list="theallspecies" data-ap-auto-select-first="true"/>
+																<datalist id="theallspecies">
+																	<option th:each="entry : ${allspeciecodeslist}"
+																		th:value="${entry.showText}"><input
+																			type="hidden" th:attr="value=${entry.id}" />
+																	</option>
+																</datalist></td>
+															<td class="text-center icon"><a href="#"
+																role="button"><span style="font-size: 1.3em;"
+																	class="glyphicon glyphicon-expand"
+																	aria-hidden="true"></span></a></td>
+															<td class="text-center icon"><a href="#"
+																role="button"><span style="font-size: 1.3em;"
+																	class="glyphicon glyphicon-minus-sign"
+																	aria-hidden="true"></span></a></td>
+															<td class="text-center icon"><a href="#"
+																role="button"><span style="font-size: 1.3em;"
+																	class="glyphicon glyphicon-plus-sign"
+																	aria-hidden="true"></span></a></td>
+															<td><input type="hidden" value="" /></td>
+														</tr>
+														<tr class="clickable02" hidden>
+															<td colspan="5">
+																<div class="col-md-12 col-sm-offset-1">
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label for="length_">
+																			<span class="field-name" th:utext="#{i18n.length_title}">Length</span>
+																		</label>
+																		<br/>
+																		<input
+																			type="text" class="input-sm" size="4" name="length_"
+																			placeholder="" min="0" value="0" max="9999"
+																			data-rule-digits="true" maxlength="4" /><label>&nbsp;mm</label>
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label for="weight_">
+																			<span class="field-name" th:utext="#{i18n.weight_title}">Weight</span>
+																		</label>
+																		<br/>
+																		<input
+																			type="text" class="input-sm" size="4" name="weight_"
+																			placeholder="" min="0" value="0" max="9999"
+																			data-rule-digits="true" maxlength="4" /><label>&nbsp;g</label>
+
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.fishsex_title}">Sex Code</span>
+																		</label>
+																		<br/>
+																		<select
+																			class="input-sm" name="sex_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('SEX').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}" th:attr="selected=${entry.codeName == 'sex2'} ? true"></option>
+																		</select>
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.maturity_title}">Maturity</span>
+																		</label>
+																		<br/>
+																		<select
+																			class="input-sm" name="maturity_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('MATURITY').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}"></option>
+																		</select>
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.gut_condition_title}">Condition of Gut</span>
+																		</label>
+																		<br/>
+																		<select class="input-sm"
+																			name="gutCondition_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('GUT_CONDITION').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}"></option>
+																		</select>
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.gut_fullness_title}">Fullness of Gut</span>
+																		</label>
+																		<br/>
+																		<select class="input-sm"
+																			name="gutFullness_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('GUT_FULLNESS').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}"></option>
+																		</select>
+																	</div>
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.gut_contents_title}">Contents of Gut</span>
+																		</label>
+																		<br/>
+																		<select class="input-sm"
+																			name="gutContents_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('GUT_CONTENTS').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}"></option>
+																		</select>
+																	</div>
+
+																	<div class="col-md-4 mrgn-bttm-md">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.specimen_state_title}">Specimen State</span>
+																		</label>
+																		<br/>
+																		<select class="input-sm"
+																			name="specimenState_">
+																			<option value=""></option>
+																			<option
+																				th:each="entry : ${refcodelist.get('SPECIMEN_STATE').codeValues}"
+																				th:value="${entry.codeName}"
+																				th:utext="${entry.showText}"></option>
+																		</select>
+																	</div>
+																	<div class="col-md-4">
+																		<label>
+																			<span class="field-name" th:utext="#{i18n.recapture_title}">Recapture</span>
+																		</label>
+																		<br/>
+																		<label
+																			class="radio-inline"><input type="radio"
+																			id="radio_yes" name="optradioRecap_"
+																			checked="checked" value="yes"
+																			th:utext="#{i18n.yes_title}" /> </label> <label
+																			class="radio-inline"><input type="radio"
+																			id="radio_no" name="optradioRecap_" value="no"
+																			th:utext="#{i18n.no_title}" /> </label>
+																	</div>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+					th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_PARASITIC_COLLECTIONS')}__}">Save</button>
+				<button id="button_exit" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_exit_caption}">Exit</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/parasiticcollection/attachments.js}"></script>
+	</th:block>
+</body>
+</html>

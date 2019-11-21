@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.la.fishobsercol.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theLA = /*[[${referla}]]*/;
+        var speciecodesList = /*[[${allspeciecodeslist}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referla_id"
+					th:attr="value=${referla != null} ? ${referla.id} : '#'" />
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal mrgn-bttm-md"
+						role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-md-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.la_title} + ' - ' + #{i18n.la_title.fishobsercol} + ' ' + #{i18n.summary.title} + '</b>'">
+										Larval Assessments - Fish Observed/Collected Summary</p>
+								</div>
+								<div class="col-sm-4">
+									<label>
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleCode}"
+										readonly="true" />
+								</div>
+								<div class="col-sm-4">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleStatus}"
+										readonly="true">
+								</div>
+								<div th:replace="larvalassessments/labase :: la_nav" />
+							</div>
+						</div>
+						<div class="row brdr-bttm mrgn-bttm-lg">
+							<table id="fish_collect_table"
+								class=" mrgn-bttm-lg"
+								style="width: 100%; border-collapse: separate; border-spacing: 0 15px">
+								<thead>
+									<tr>
+										<th></th>
+										<th colspan="2" class="text-center"
+											th:utext="#{i18n.fish_observed_title}">Observed</th>
+										<th colspan="2" class="text-center"
+											th:utext="#{i18n.fish_collected_title}">Collected</th>
+										<th class="text-center" th:utext="#{i18n.total_title}">Total</th>
+										<th></th>
+										<th class="text-center" th:utext="#{i18n.delete_title}"></th>
+										<th class="text-center" th:utext="#{i18n.add_title}"></th>
+									</tr>
+									<tr>
+										<th class="text-center" th:utext="#{i18n.fishspecie_title}">Fish
+											Specie</th>
+										<th class="text-center" th:utext="#{i18n.alive_title}">Alive</th>
+										<th class="text-center" th:utext="#{i18n.dead_title}">Dead</th>
+										<th class="text-center" th:utext="#{i18n.released_title}">Released</th>
+										<th class="text-center" th:utext="#{i18n.dead_title}">Dead</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-center"><input type="text" id="laspecies" name="laspecies"
+											class="input-sm" list="allspecies" style="width: 100%" data-ap-auto-select-first="true"/> <datalist
+												id="allspecies">
+												<option th:each="entry : ${allspeciecodeslist}"
+													th:value="${entry.showText}"><input type="hidden"
+														th:attr="value=${entry.id}" />
+												</option>
+											</datalist></td>
+										<td class="text-center"><label for="#"></label><input type="text" size="4"
+											name="#" value="0" data-rule-digits="true" class="input-sm"
+											maxlength="4" /></td>
+										<td class="text-center"><label for="#"></label><input type="text" size="4"
+											name="#" value="0" data-rule-digits="true" class="input-sm"
+											maxlength="4" placeholder="" /></td>
+										<td class="text-center"><label for="#"></label><input type="text" size="4"
+											name="#" value="0" data-rule-digits="true" class="input-sm"
+											maxlength="4" placeholder="" /></td>
+										<td class="text-center"><label for="#"></label><input type="text" size="4"
+											name="#" value="0" data-rule-digits="true" class="input-sm"
+											maxlength="4" placeholder="" /></td>
+										<td class="text-center"><input type="text" size="4"
+											name="#" value="0" placeholder="" class="input-sm" readOnly="true" /></td>
+										<td class="text-center icon"><a href="#" role="button" th:title="#{i18n.btn.edit}"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-edit"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button" th:title="#{i18n.btn.remove}"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-minus-sign"
+												aria-hidden="true"></span></a></td>
+										<td class="text-center icon"><a href="#" role="button" th:title="#{i18n.btn.add}"><span
+												style="font-size: 1.3em;"
+												class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+										</td>
+										<td><input type="hidden" value=""/></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button" class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+						th:utext="#{i18n.button_save_caption}"
+						th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LARVAL_ASSESSMENTS')}__}">Save</button>
+				<button id="button_return" type="button" class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+						th:utext="#{i18n.button_return_colcon_caption}">Return to Collection Conditions</button>
+				<button id="button_end" type="button" class="btn btn-success mrgn-lft-sm mrgn-rght-sm"
+						th:utext="#{i18n.button_completed_caption}">Record Completed</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/larvalassessments/fishobsercol.js}"></script>
+	</th:block>
+</body>
+</html>

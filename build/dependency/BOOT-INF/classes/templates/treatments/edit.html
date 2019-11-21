@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.main_caption}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theTR = /*[[${refertr}]]*/;
+        var allthelakes = /*[[${alllakeslist}]]*/;
+        var allthestreams = /*[[${allstreamslist}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="refertr_id"
+					th:attr="value=${refertr != null} ? ${refertr.id}" />
+
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.tr_title} + ' - ' + #{i18n.main_caption} + '</b>'">
+										Treatments - Main</p>
+								</div>
+								<div class="col-sm-4">
+									<label for="sampleCode">
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode" placeholder="" readonly="true" />
+								</div>
+								<div class="col-sm-4">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input
+										type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus" value="DRAFT" readonly="true">
+
+								</div>
+								<div class="col-sm-4">
+									<label for="gotoMenu">
+										<span class="field-name" th:utext="#{i18n.goto_caption}">Go to</span>
+									</label>
+									<br/>
+										<select id="gotoMenu" name="gotoMenu" onchange="gotoTRPage(this.options[this.selectedIndex].value)">
+										<option value=""></option>
+										<option value="trList">Treatment List</option>
+										<option value="trMain">Main</option>
+										<option value="primaryApp">Primary Application</option>
+										<option value="secondaryApp">Secondary Application</option>
+										<option value="desiredCon">Desired Concentrations</option>
+										<option value="mlc">Minimum Lethal Concentrations</option>
+										<option value="waterChem">Water Chemistry</option>
+										<option value="discharge">Discharge</option>
+										<option value="chemAnalysis">Chemical Analysis</option>
+										<option value="summary">Summary</option>
+									</select>
+								</div>
+								<!-- 								<div class="form-group col-md-5">
+									<label for="sample_code" class="col-sm-4 control-label"
+										th:utext="#{i18n.sample_code_caption}">Sample ID</label>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode" placeholder="" readonly="true" />
+
+								</div>
+								<div class="form-group col-md-5">
+									<label for="sampleStatus" class="col-sm-4 control-label"
+										th:utext="#{i18n.sample_status_caption}">Status</label> <input
+										type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus" value="DRAFT" readonly="true">
+
+								</div>-->
+
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-md-6">
+								<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+									<h5 class="remove_margin" th:utext="#{i18n.location_title}" style="color: #6A5ACD">Location</h5>
+								</div>
+								<div class="col-sm-6">
+									<label for="trLake" class="required">
+										<span class="field-name" th:utext="#{i18n.lake_caption}">Lake</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input type="text" class="input-sm"
+										id="trLake" name="trLake" list="alllakes" required="required"
+									   	data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="alllakes">
+										<option th:each="entry : ${alllakeslist}"
+											th:value="${entry.showText}"><input type="hidden"
+												th:attr="value=${entry.id}" /></option>
+									</datalist>
+								</div>
+								<div id="trStreamDiv" class="col-sm-6 mrgn-bttm-md">
+									<label for="trStream" class="required">
+										<span class="field-name" th:utext="#{i18n.stream_caption}">Stream</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+										type="text" id="trStream" name="trStream" list="allstreams" class="input-sm"
+										required="required"
+										data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allstreams">
+										<!-- <option th:each="entry : ${allstreamslist}"
+									th:value="${entry.showText}"><input type="hidden"
+										th:attr="value=${entry.id}" /></option> -->
+									</datalist>
+								</div>
+							</div>
+							<div class="row col-md-6">
+								<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+									<h5 class="remove_margin" th:utext="#{i18n.timeframe_title}" style="color: #6A5ACD">Timeframe</h5>
+								</div>
+								<div class="col-sm-6">
+									<label for="treatmentStart" class="required">
+										<span class="field-name" th:utext="#{i18n.tr_start_title}">Treatment Start</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+										type="date" class="input-sm" id="treatmentStart"
+										name="treatmentStart" required="required" />
+								</div>
+								<div class="col-sm-6 mrgn-bttm-md">
+									<label for="treatmentEnd">
+										<span class="field-name" th:utext="#{i18n.tr_end_title}">Treatment End</span>
+									</label>
+									<br/>
+									<input
+										type="date" class="input-sm" id="treatmentEnd"
+										name="treatmentEnd" />
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.methodology_title}" style="color: #6A5ACD">Methodology</h5>
+							</div>
+							<div class="col-sm-6 col-md-3 mrgn-bttm-md">
+								<label for="trMethodology" class="required">
+									<span class="field-name" th:utext="#{i18n.methodology_title}">Methodology</span>
+									<strong class="required" th:utext="#{form.required}">(required)</strong>
+								</label>
+								<br/>
+								<select class="input-sm" id="trMethodology"
+									th:attr="name=${refcodelist.get('TREATMENT_METHODOLOGY').codeType}"
+									required="required">
+									<option value="" th:utext="#{i18n.default.select}">Select
+										One...</option>
+									<option
+										th:each="entry : ${refcodelist.get('TREATMENT_METHODOLOGY').codeValues}"
+										th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+								</select>
+							</div>
+							<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+								<label for="total_discharge">
+									<span class="field-name" th:utext="#{i18n.total_discharge_caption}">Total Discharge</span>
+									<span>&nbsp;(m3s)</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="total_discharge"
+									name="total_discharge" placeholder="" max="9999.99" min="0"
+									data-rule-number="true" maxlength="7" />
+							</div>
+
+							<div class="col-sm-6 col-md-3 mrgn-bttm-md">
+								<label for="kilo_treated">
+									<span class="field-name" th:utext="#{i18n.kilo_treated_caption}">Kilometers Treated</span>
+									<span>&nbsp;(km)</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="kilo_treated"
+									name="kilo_treated" placeholder="" max="999.99" min="0"
+									data-rule-number="true" maxlength="6" />
+							</div>
+							<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+								<label for="calendar_days">
+									<span class="field-name" th:utext="#{i18n.calendar_days_caption}">Calendar Days</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="calendar_days"
+									name="calendar_days" placeholder="" max="99" min="0"
+									data-rule-digits="true" maxlength="2" />
+							</div>
+
+							<div
+								class=" col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="trAbundanceIndex" class="required">
+									<span class="field-name" th:utext="#{i18n.abundance_index_title}">Abundance Index</span>
+									<strong class="required" th:utext="#{form.required}">(required)</strong>
+								</label>
+								<br/>
+								<select class="input-sm" id="trAbundanceIndex"
+									th:attr="name=${refcodelist.get('SL_ABUNDANCE_INDEX').codeType}"
+									required="required">
+									<option value="" th:utext="#{i18n.default.select}">Select
+										One...</option>
+									<option
+										th:each="entry : ${refcodelist.get('SL_ABUNDANCE_INDEX').codeValues}"
+										th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+								</select>
+							</div>
+
+							<div class="col-md-8 col-sm-12">
+								<label for="tr_remarks">
+									<span class="field-name" th:utext="#{i18n.remarks_caption}">Remarks</span>
+								</label>
+								<br/>
+								<textarea id="tr_remarks" name="tr_remarks"
+									class="input-sm" rows="3" cols="80" maxlength="250"></textarea>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.crew_title}" style="color: #6A5ACD">Crew</h5>
+							</div>
+
+							<div class="col-md-3 col-sm-4 mrgn-bttm-md">
+								<label for="max_crew">
+									<span class="field-name" th:utext="#{i18n.max_crew_size_caption}">Maximum Crew Size</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="max_crew"
+									name="max_crew" placeholder="" max="99" min="0"
+									data-rule-digits="true" maxlength="2" />
+							</div>
+							<div class="col-sm-9 col-sm-8 mrgn-bttm-md">
+								<label for="person_days">
+									<span class="field-name" th:utext="#{i18n.person_days_caption}">Person-Days</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="person_days"
+									name="person_days" placeholder="" max="999.9" min="0"
+									data-rule-number="true" maxlength="5" /> <label
+									th:utext="#{i18n.person_days_including_caption}">Including
+									pre-treatment and treatment</label>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div th:replace="layout/base :: common_flow_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_TREATMENTS')}__})" />
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/treatments/edit.js}"></script>
+	</th:block>
+</body>
+</html>

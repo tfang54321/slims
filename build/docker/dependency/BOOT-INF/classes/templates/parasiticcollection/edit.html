@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+	<title th:utext="#{i18n.main_caption}"></title>
+	<th:block th:replace="layout/base :: shared_css" />
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var thePC = /*[[${referpc}]]*/;
+		var fisherNameList = /*[[${allFisherNames}]]*/;
+		/*]]>*/
+	</script>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+	<div class="container">
+		<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+			<input type="hidden" value="#" id="referpc_id"
+				   th:attr="value=${referpc != null} ? ${referpc.id}" />
+
+			<div class="wb-frmvld col-md-12">
+				<form id="edit_form" class="form-horizontal" role="form">
+					<div class="row brdr-bttm">
+						<div class="row col-sm-12 mrgn-bttm-sm">
+							<div class="row col-sm-12">
+								<p class="lead" th:utext="'<b>' + #{i18n.pc_title} + ' - ' + #{i18n.main_caption} + '</b>'">
+									Parasitic Collections - Main</p>
+							</div>
+							<div class="col-sm-6 col-md-4">
+								<label for="sampleCode">
+									<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="sampleCode"
+									   name="sampleCode" placeholder="" readonly="true" />
+							</div>
+							<div class="col-sm-6 col-md-4">
+								<label for="sampleStatus">
+									<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+								</label>
+								<br/>
+								<input
+										type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus" value="DRAFT" readonly="true">
+							</div>
+						</div>
+					</div>
+					<div class="row brdr-bttm">
+						<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+							<h5 class="remove_margin" th:utext="#{i18n.date_location_title}" style="color: #6A5ACD">Date and Location</h5>
+						</div>
+						<div class="col-sm-6 col-md-12">
+							<div class="row col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="collectedDate" class="required">
+									<span class="field-name" th:utext="#{i18n.collected_date_title}">Date Collected</span>
+									<strong class="required" th:utext="#{form.required}">(required)</strong>
+								</label>
+								<br/>
+								<input type="date" class="input-sm" id="collectedDate" name="collectedDate"
+									   required="required" />
+							</div>
+							<!-- <div class="row col-md-10 mrgn-bttm-md">
+                                <label for="firsherName" class="col-md-3 required"
+                                    th:utext="#{i18n.fisher_name_title}">Fisher's Name</label> <input
+                                    type="text" class="input-sm" name="firsherName"
+                                    id="firsherName" maxlength="45"/>
+                            </div> -->
+							<div class="row col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="firsherName" class="required">
+									<span class="field-name" th:utext="#{i18n.fisher_name_title}">Fisher's Name</span>
+									<strong class="required" th:utext="#{form.required}">(required)</strong>
+								</label>
+								<br/>
+								<input
+										type="text" class="input-sm" name="firsherName"
+										id="firsherName" maxlength="45" list="allFisherNames" required="required"
+										data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+								<datalist id="allFisherNames">
+									<option th:each="entry : ${allFisherNames}"
+											th:value="${entry}"></option>
+								</datalist>
+							</div>
+							<div class="row col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="lakeDistrict" class="required">
+									<span class="field-name" th:utext="#{i18n.statistical_district_title}">Statistical District</span>
+									<strong class="required" th:utext="#{form.required}">(required)</strong>
+								</label>
+								<br/>
+								<input type="text" class="input-sm"
+									   id="lakeDistrict" name="lakeDistrict" list="alllds" required="required"
+									   data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+								<datalist id="alllds">
+									<option th:each="entry : ${lakeDistrictslist}"
+											th:value="${entry.showText}"><input type="hidden"
+																				th:attr="value=${entry.id}" /></option>
+								</datalist>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-12">
+							<div class="row form-group col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="managementUnit">
+									<span class="field-name" th:utext="#{i18n.management_unit_title}">Management Unit</span>
+								</label>
+								<br/>
+								<select class="input-sm" id="managementUnit"
+										th:attr="name=${refcodelist.get('MANAGEMENT_UNIT').codeType}">
+									<option value="" th:utext="#{i18n.default.select}">Select
+										One...</option>
+									<option
+											th:each="entry : ${refcodelist.get('MANAGEMENT_UNIT').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+								</select>
+							</div>
+							<div class="row col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="grid_number">
+									<span class="field-name" th:utext="#{i18n.grid_number_title}">Grid Number</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="grid_number"
+									   name="grid_number" placeholder="" max="9999" min="0"
+									   data-rule-digits="true" maxlength="4" />
+							</div>
+							<div class="row col-md-4 col-sm-12 mrgn-bttm-md">
+								<label for="grid_number_est">
+									<span class="field-name" th:utext="#{i18n.grid_number_est_title}">Grid Number(estimated)</span>
+								</label>
+								<br/>
+								<input type="text" class="input-sm" id="grid_number_est"
+									   name="grid_number_est" placeholder="" max="9999" min="0"
+									   data-rule-digits="true" maxlength="4" />
+							</div>
+						</div>
+					</div>
+					<div class="row brdr-bttm">
+						<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+							<h5 class="remove_margin" th:utext="#{i18n.gear_depth_title}" style="color: #6A5ACD">Gear and Depth</h5>
+						</div>
+						<div class="row col-sm-12 mrgn-bttm-sm">
+							<div class="col-sm-12 col-md-3">
+								<label for="gearType">
+									<span class="field-name" th:utext="#{i18n.gear_type_title}">Gear Type</span>
+								</label>
+								<br/>
+								<select class="input-sm" id="gearType"
+										th:attr="name=${refcodelist.get('GEAR').codeType}">
+									<option value="" th:utext="#{i18n.default.select}">Select
+										One...</option>
+									<option
+											th:each="entry : ${refcodelist.get('GEAR').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+								</select>
+							</div>
+							<table id="gear_table" class="col-md-7 col-sm-12 mrgn-bttm-sm"
+								   style="border-collapse: separate; border-spacing: 0 15px">
+								<thead>
+								<th></th>
+								<th></th>
+								<th class="text-center" th:utext="#{i18n.max_caption} + '.'">Max.</th>
+								<th class="text-center" th:utext="#{i18n.min_caption} + '.'">Min.</th>
+								<th class="text-center" th:utext="#{i18n.avg_caption} + '.'">Avg.</th>
+								</thead>
+								<tbody>
+								<tr>
+									<td class="text-right"><label th:utext="#{i18n.mesh_size_title} + '(in)'">Mesh Size(in)</label></td>
+									<td class="text-center"><label for="meshSize"></label><input type="text" class="input-sm" id="meshSize"
+																								 name="meshSize" placeholder="" max="99.999" min="0"
+																								 data-rule-number="true" maxlength="6" size="4"/></td>
+									<td class="text-center"><label for="maxMesh"></label><input type="text" class="input-sm mesh-dim" id="maxMesh"
+																								name="maxMesh" placeholder="" max="99.999" min="0"
+																								data-rule-number="true" maxlength="6" size="4"/></td>
+									<td class="text-center"><label for="minMesh"></label><input type="text" class="input-sm mesh-dim" id="minMesh"
+																								name="minMesh" placeholder="" max="99.999" min="0"
+																								data-rule-number="true" maxlength="6" size="4"/></td>
+									<td class="text-center"><label for="avgMesh"></label><input type="text" class="input-sm" id="avgMesh"
+																								name="avgMesh" placeholder="" max="99.999" min="0" readOnly="true"
+																								data-rule-number="true" maxlength="6" size="4"/></td>
+								</tr>
+								<tr>
+									<td class="text-right"><label th:utext="#{i18n.water_depth_title} + '(ft)'">Water Depth(ft)</label></td>
+									<td class="text-center"><label for="waterDepth"></label><input type="text" class="input-sm" id="waterDepth"
+																								   name="waterDepth" placeholder="" max="99999" min="0"
+																								   data-rule-digits="true" maxlength="5" size="4"/></td>
+									<td class="text-center"><label for="maxDepth"></label><input type="text" class="input-sm depth-dim" id="maxDepth"
+																								 name="maxDepth" placeholder="" max="99999" min="0"
+																								 data-rule-digits="true" maxlength="5" size="4"/></td>
+									<td class="text-center"><label for="minDepth"></label><input type="text" class="input-sm depth-dim" id="minDepth"
+																								 name="minDepth" placeholder="" max="99999" min="0"
+																								 data-rule-digits="true" maxlength="5" size="4"/></td>
+									<td class="text-center"><label for="avgDepth"></label><input type="text" class="input-sm" id="avgDepth"
+																								 name="avgDepth" placeholder="" max="99999" min="0" readOnly="true"
+																								 data-rule-digits="true" maxlength="5" size="4"/></td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="displayMessage"></div>
+		<div th:replace="layout/base :: common_flow_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_PARASITIC_COLLECTIONS')}__})" />
+		<div th:replace="layout/base :: shared_controls" />
+	</div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+
+	<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+	<script th:src="@{/js/parasiticcollection/edit.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.main_caption}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var theFM = /*[[${referfm}]]*/'';
+        var allthelakes = /*[[${alllakeslist}]]*/'';
+        var allthestreams = /*[[${allstreamslist}]]*/'';
+        var allthebranches = /*[[${allbrancheslist}]]*/'';
+        var allthestations = /*[[${allstationslist}]]*/'';
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-bttm-md mrgn-rght-sm">
+            <input type="hidden" value="#" id="referfm_id"
+                   th:attr="value=${referfm != null} ? ${referfm.id}"/>
+
+            <div class="wb-frmvld col-md-12">
+                <form id="edit_form" class="form-horizontal" role="form">
+                    <div class="row brdr-bttm">
+                        <div class="row col-md-12 mrgn-tp-md mrgn-bttm-md">
+                            <div class="row col-sm-12">
+                                <p class="lead"
+                                   th:utext="'<b>' + #{i18n.fm_title} + ' - ' + #{i18n.main_caption} + '</b>'">
+                                    Fish Modules - Main</p>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <label for="sampleCode" th:utext="#{i18n.sample_code_caption}">Sample
+                                    ID</label>
+                                <br/>
+                                <input type="text" class="input-sm" id="sampleCode"
+                                       name="sampleCode" placeholder="" readonly="true"/>
+
+                            </div>
+                            <div class="row col-md-4 col-sm-4">
+                                <label for="sampleStatus"
+                                       th:utext="#{i18n.sample_status_caption}">Status</label>
+                                <br/>
+                                <input
+                                        type="text" class="input-sm" id="sampleStatus"
+                                        name="sampleStatus" value="DRAFT" readonly="true">
+
+                            </div>
+                        </div>
+                        <div class="row col-md-12 mrgn-bttm-md">
+                            <div class="col-md-4 col-sm-4">
+                                <label for="sampleDate" class="required">
+                                    <span class="field-name" th:utext="#{i18n.sample_date_caption}">Sample Date</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="date"
+                                       class="input-sm" id="sampleDate" name="sampleDate"
+                                       required="required"/>
+
+                            </div>
+                            <div class="row col-md-4 col-sm-4">
+                                <label for="startTime">
+                                    <span class="field-name" th:utext="#{i18n.start_time_caption}">Start Time</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="startTime"
+                                       name="startTime" maxlength="5" minlength="5"
+                                       placeholder="HH:mm(24h)"
+                                       th:attr="data-msg-pattern=#{i18n.time_format_24h}"/>
+
+                            </div>
+                            <div class="row col-md-4 col-sm-4">
+                                <label for="finishTime">
+                                    <span class="field-name" th:utext="#{i18n.finish_time_caption}">Finish Time</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="finishTime"
+                                       placeholder="HH:mm(24h)" name="finishTime" maxlength="5"
+                                       minlength="5" th:attr="data-msg-pattern=#{i18n.time_format_24h}"/>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row brdr-bttm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.location_title}" style="color: #6A5ACD">Location</h5>
+                        </div>
+                        <div class="col-sm-12">
+                            <div id="fmLakeDiv" class="row col-md-4 col-sm-4">
+                                <label for="fmLake" class="required">
+                                    <span class="field-name" th:utext="#{i18n.lake_caption}">Lake</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm"
+                                       id="fmLake" name="fmLake" list="alllakes" required="required"
+                                       data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="alllakes">
+                                    <option th:each="entry : ${alllakeslist}"
+                                            th:value="${entry.showText}"><input type="hidden"
+                                                                                th:attr="value=${entry.id}"/></option>
+                                </datalist>
+                            </div>
+                            <div id="fmStreamDiv" class="col-md-4 col-sm-4 mrgn-bttm-md">
+                                <label for="fmStream" class="required">
+                                    <span class="field-name" th:utext="#{i18n.stream_caption}">Stream</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                        type="text" id="fmStream" name="fmStream" list="allstreams" class="input-sm"
+                                        required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allstreams">
+                                </datalist>
+                            </div>
+                            <div id="fmBranchDiv" class="row col-md-4 col-sm-4">
+                                <label for="fmBranch" class="required">
+                                    <span class="field-name" th:utext="#{i18n.branchlentic_caption}">BranchLentic</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                        type="text" id="fmBranch" name="fmBranch" list="allbranches" class="input-sm"
+                                        required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allbranches">
+                                </datalist>
+                            </div>
+                        </div>
+                        <div id="fmStationDiv" class="col-sm-12 mrgn-bttm-md">
+                            <div class="row col-md-4 col-sm-5">
+                                <label for="fmStationFrom" class="required">
+                                    <span class="field-name" th:utext="#{i18n.stationfrom_caption}">Station From</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                        type="text" id="fmStationFrom" name="fmStationFrom" class="input-sm"
+                                        list="allFromStations" required="required"
+                                        data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allFromStations">
+                                </datalist>
+                                <select class="input-sm fas"
+                                        id="stationFromAdjust" name="stationFromAdjust">
+                                    <option class='fas fa-equals' value="equal">&#xf52c;</option>
+                                    <option class='fas fa-minus' value="minus">&#xf068;</option>
+                                    <option class='fas fa-plus' value="plus">&#xf067;</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-sm-5">
+                                <label for="fmStationTo" class="required">
+                                    <span class="field-name" th:utext="#{i18n.stationto_caption}">Station To</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                        type="text" id="fmStationTo" name="fmStationTo" class="input-sm"
+                                        list="allToStations" required="required"
+                                        data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allToStations">
+                                </datalist>
+                                <select class="input-sm fas" id="stationToAdjust"
+                                        name="stationToAdjust">
+                                    <option class='fas fa-equals' value="equal">&#xf52c;</option>
+                                    <option class='fas fa-minus' value="minus">&#xf068;</option>
+                                    <option class='fas fa-plus' value="plus">&#xf067;</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row brdr-bttm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.location_coordinates_title}"
+                                style="color: #6A5ACD">Location Coordinates</h5>
+                        </div>
+                        <div class="col-md-6 col-sm-7 mrgn-bttm-md">
+                            <label for="mapDatum">
+                                <span class="field-name" th:utext="#{i18n.datum_caption}">mapDatum</span>
+                            </label>
+                            <br/>
+                            <select
+                                    class="input-sm" id="mapDatum"
+                                    th:attr="name=${refcodelist.get('MAP_DATUM').codeType}">
+
+                                <option
+                                        th:each="entry : ${refcodelist.get('MAP_DATUM').codeValues}"
+                                        th:value="${entry.codeName}" th:utext="${entry.showText}"
+                                        th:attr="selected=${entry.codeName == 'WGS-84'} ? true"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-sm-5 mrgn-bttm-md">
+                            <label for="utmZone">
+                                <span class="field-name" th:utext="#{i18n.utmzone_title}">utmZone</span>
+                            </label>
+                            <br/>
+                            <select
+                                    class="input-sm" id="utmZone"
+                                    th:attr="name=${refcodelist.get('UTM_ZONE').codeType}">
+                                <option value="" th:utext="#{i18n.default.select}">Select
+                                    One...
+                                </option>
+                                <option
+                                        th:each="entry : ${refcodelist.get('UTM_ZONE').codeValues}"
+                                        th:value="${entry.codeName}" th:utext="${entry.showText}"
+                                        th:attr="selected=${entry.codeName == 'UTMZone15'} ? true"></option>
+                            </select>
+                        </div>
+                        <div class="row mrgn-tp-md">
+                            <div class="pad-left-col">
+                                <div class="form-inline">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="utm_e01">
+                                            <span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;E</span>
+                                        </label>
+                                        <br/>
+                                        <input type="text" class="input-sm" id="utm_e01"
+                                               name="utm_e01" placeholder="" data-rule-number="true"
+                                               data-rule-range="[250000,750000]" maxlength="6"/>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-6">
+                                        <label for="utm_n01">
+                                            <span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;N</span>
+                                        </label>
+                                        <br/>
+                                        <input
+                                                type="text" class="input-sm" id="utm_n01"
+                                                name="utm_n01" placeholder="" data-rule-number="true"
+                                                data-rule-range="[4500000,5500000]"  maxlength="7"/>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="utm_e02">
+                                            <span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;E</span>
+                                        </label>
+                                        <br/>
+                                        <input type="text" class="input-sm" id="utm_e02"
+                                               name="utm_e02" placeholder="" data-rule-number="true"
+                                               data-rule-range="[250000,750000]" maxlength="6"/>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-6">
+                                        <label for="utm_n02">
+                                            <span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+                                        <br/>
+                                        <input
+                                                type="text" class="input-sm" id="utm_n02"
+                                                name="utm_n02" placeholder="" data-rule-number="true"
+                                                data-rule-range="[4500000,5500000]" maxlength="7"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mrgn-tp-md">
+                            <div class="pad-left-col">
+                                <div class="form-inline">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="utm_e03">
+                                            <span class="field-name">3.UTM&nbsp;&nbsp;&nbsp;E</span></label>
+                                        <br/>
+                                        <input type="text" class="input-sm" id="utm_e03"
+                                               name="utm_e03" placeholder="" data-rule-number="true"
+                                               data-rule-range="[250000,750000]" maxlength="6"/>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-6">
+                                        <label for="utm_n03">
+                                            <span class="field-name">3.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+                                        <br/>
+                                        <input
+                                                type="text" class="input-sm" id="utm_n03"
+                                                name="utm_n03" placeholder="" data-rule-number="true"
+                                                data-rule-range="[4500000,5500000]" maxlength="7"/>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="utm_e04">
+                                            <span class="field-name">4.UTM&nbsp;&nbsp;&nbsp;E</span></label>
+                                        <br/>
+                                        <input type="text" class="input-sm" id="utm_e04"
+                                               name="utm_e04" placeholder="" data-rule-number="true"
+                                               data-rule-range="[250000,750000]" maxlength="6"/>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-6">
+                                        <label for="utm_n04">
+                                            <span class="field-name">4.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+                                        <br/>
+                                        <input
+                                                type="text" class="input-sm" id="utm_n04"
+                                                name="utm_n04" placeholder="" data-rule-number="true"
+                                                data-rule-range="[4500000,5500000]" maxlength="7"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-md pull-left">
+                            <div class="pad-left-col">
+                                <label for="fm_location"
+                                       th:utext="#{i18n.location_title}">Location</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="input-sm"
+                                       id="fm_location" name="fm_location" placeholder=""
+                                       maxlength="250" style="width: 100%"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row brdr-bttm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.location_details_title}"
+                                style="color: #6A5ACD">Location Details</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="containment">
+                                    <span class="field-name" th:utext="#{i18n.containment_title}">Containment</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="containment"
+                                       name="containment" placeholder="" max="100"
+                                       data-rule-digits="true" min="0" maxlength="3"/><label>&nbsp;%</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="conductivity">
+                                    <span class="field-name"
+                                          th:utext="#{i18n.field_conductivity_caption}">Conductivity</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="conductivity"
+                                       name="conductivity" placeholder="" max="9999"
+                                       data-rule-digits="true" min="0" maxlength="4"/><label>&nbsp;µƱ</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="temperature">
+                                    <span class="field-name" th:utext="#{i18n.temperature_title}">Temperature</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="temperature"
+                                       name="temperature" placeholder="" max="99.99"
+                                       data-rule-number="true" min="-99.99" maxlength="6"/><label>&nbsp;&#8451;</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="meanDepth">
+                                    <span class="field-name" th:utext="#{i18n.field_meandepth_caption}">Mean Depth</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="meanDepth"
+                                       name="meanDepth" placeholder="" max="9999.999"
+                                       data-rule-number="true" min="0" maxlength="8"/><label>&nbsp;m</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="meanWidth">
+                                    <span class="field-name" th:utext="#{i18n.field_meanwidth_caption}">Mean Width</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="meanWidth"
+                                       name="meanWidth" placeholder="" max="9999.999"
+                                       data-rule-number="true" min="0" maxlength="8"/><label>&nbsp;m</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="maxDepth">
+                                    <span class="field-name" th:utext="#{i18n.max_depth_title}">Maximum Depth</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="maxDepth"
+                                       name="maxDepth" placeholder="" max="9999.999"
+                                       data-rule-number="true" min="0" maxlength="8"/><label>&nbsp;m</label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="measuredArea">
+                                    <span class="field-name" th:utext="#{i18n.measured_area_title}">Measured Area</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="measuredArea"
+                                       name="measuredArea" placeholder="" max="9999"
+                                       data-rule-digits="true" min="0" maxlength="4"/><label>&nbsp;m<sup>2</sup></label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-md">
+                                <label for="estimatedArea">
+                                    <span class="field-name"
+                                          th:utext="#{i18n.estimated_area_title}">Estimated Area</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="estimatedArea"
+                                       name="estimatedArea" placeholder="" max="9999"
+                                       data-rule-digits="true" min="0" maxlength="4"/><label>&nbsp;m<sup>2</sup></label>
+                            </div>
+                            <div class="row col-md-4 col-sm-6 mrgn-bttm-sm">
+                                <label for="distanceSurvey">
+                                    <span class="field-name"
+                                          th:utext="#{i18n.distance_surveyed_title}">Distance Surveyed</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="distanceSurvey"
+                                       name="distanceSurvey" placeholder="" max="9999.999"
+                                       data-rule-number="true" min="0" maxlength="8"/><label>&nbsp;m</label>
+                            </div>
+                        </div>
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="'&nbsp;&nbsp;&nbsp;' + #{i18n.collecting_condition_title}"
+                                    style="color: #6A5ACD">Collecting Conditions</h5>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-md-10 col-sm-12 mrgn-bttm-md">
+                                <label
+                                        th:utext="#{i18n.effectiveness_title}">Effectiveness:
+                                </label>
+                                <br/>
+                                <div class="radio-inline" id="radios_effectiveness">
+                                    <label class="radio-inline"> <input type="radio"
+                                                                        id="radio_ef_good" name="optradio_effectiveness"
+                                                                        value="good"
+                                                                        th:utext="#{i18n.good_title}"/>
+                                    </label> <label class="radio-inline"> <input type="radio"
+                                                                                 id="radio_ef_fair"
+                                                                                 name="optradio_effectiveness"
+                                                                                 value="fair"
+                                                                                 th:utext="#{i18n.fair_title}"/>
+                                </label> <label class="radio-inline"> <input type="radio"
+                                                                             id="radio_ef_poor"
+                                                                             name="optradio_effectiveness" value="poor"
+                                                                             th:utext="#{i18n.poor_title}"/>
+                                </label> </label> <label class="radio-inline"> <input type="radio"
+                                                                                      id="radio_ef_na"
+                                                                                      name="optradio_effectiveness"
+                                                                                      checked="checked" value="na"
+                                                                                      th:utext="#{i18n.na_title}"/>
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row brdr-bttm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.logistics_title}" style="color: #6A5ACD">Logistics</h5>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="technique" class="required">
+                                    <span class="field-name" th:utext="#{i18n.technique_title}">Technique</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="technique"
+                                        name="technique" required="required">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('FM_TECHNIQUE').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="methodology" class="required">
+                                    <span class="field-name" th:utext="#{i18n.methodology_title}">Methodology</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="methodology"
+                                        name="methodology" required="required">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('FM_METHODOLOGY').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="surveyPurpose">
+                                    <span class="field-name"
+                                          th:utext="#{i18n.survey_purpose_title}">Survey Purpose</span>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="surveyPurpose"
+                                        name="surveyPurpose">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('FM_SURVEY_PURPOSE').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="fmOperator1" class="required">
+                                    <span class="field-name" th:utext="#{i18n.operator1_caption}">Operator 1</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="fmOperator1"
+                                        name="fmOperator1" required="required">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="fmOperator2">
+                                    <span class="field-name" th:utext="#{i18n.operator2_caption}">Operator 2</span>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="fmOperator2"
+                                        name="fmOperator2">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                            <div class="row col-sm-4 mrgn-bttm-md">
+                                <label for="fmOperator3">
+                                    <span class="field-name" th:utext="#{i18n.operator3_caption}">Operator 3</span>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="fmOperator3"
+                                        name="fmOperator3">
+                                    <option value="" th:utext="#{i18n.default.select}">Select
+                                        One...
+                                    </option>
+                                    <option
+                                            th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+                                            th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="row" id="messageDiv"></div>
+        <div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+            <button id="button_save" type="button"
+                    class="btn btn-success mrgn-rght-sm pull-left"
+                    th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_FISH_COLLECTIONS')}__}">Save
+            </button>
+            <button id="button_run_net" type="button" disabled="true"
+                    class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                    th:utext="#{i18n.runnet_title}">Run/Net
+            </button>
+            <button id="button_hi" type="button" disabled="true"
+                    class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+                    th:utext="#{i18n.hi_title}">Habitat Inventory
+            </button>
+            <button id="button_exit" type="button"
+                    class="btn btn-primary mrgn-lft-sm mrgn-rght-sm pull-left"
+                    th:utext="#{i18n.button_exit_caption}">Exit
+            </button>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/fishmodules/edit.js}"></script>
+</th:block>
+</body>
+</html>

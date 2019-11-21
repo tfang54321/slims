@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <th:block th:replace="layout/base :: shared_css"/>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-lft-sm mrgn-rght-sm">
+            <div class="col-md-12">
+                <div id="section_title">
+                    <p class="lead" th:utext="'<b>' + #{i18n.reaches_title} + '</b>'">
+                        reaches</p>
+                </div>
+                <div id="stream_lake">
+                    <p id="input_lake">
+                        <b th:utext="#{i18n.lake_caption} + ' '">Lake: </b>
+                        <mark th:utext="${referlake.showText}" class="bg-info">#</mark>
+                    </p>
+                    <input type="hidden" value="#" id="referlake_id"
+                       th:attr="value=${referlake != null} ? ${referlake.id}"/>
+                    <p id="input_stream">
+                        <b th:utext="#{i18n.stream_caption} + ' '">Stream: </b>
+                        <mark th:utext="${referstream.showText}" class="bg-info">#</mark>
+                    </p>
+                    <input type="hidden" value="#" id="referstream_id"
+                       th:attr="value=${referstream != null} ? ${referstream.id}"/>
+                </div>
+                <table id="reach_list_table"
+                       class="wb-tables table list-table table-hover table-bordered"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th th:utext="#{i18n.reach_code_title}">reach Code</th>
+                        <th th:utext="#{i18n.name_caption}">reach Name</th>
+                        <th th:utext="#{i18n.length_title}">reach length</th>
+                        <th th:utext="#{i18n.reach_updateyear_title}">reach update
+                            year
+                        </th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="displayInfoMessage"></div>
+                <div>
+                    <div th:replace="layout/base :: loc_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_LOCATIONS')}__})"/>
+                    <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+                        <button id="button_station" type="button"
+                                class="btn btn-primary mrgn-lft-sm"
+                                th:utext="#{i18n.button_assign_stations_caption}">Assign
+                            Stations
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="edit_panel" hidden="true"
+                 class="wb-frmvld col-md-12 brdr-tp mrgn-tp-md mrgn-bttm-sm mrgn-lft-sm mrgn-rght-sm background-light">
+                <h4 th:utext="#{i18n.add_edit_reach_title}">Add/Edit Reach</h4>
+                <form class="form-horizontal mrgn-tp-md" role="form" id="edit_form">
+                    <input type="hidden" value="#" id="reach_id"/>
+                    <div class="form-group pad-left-col">
+                        <label for="reachCode" class="required">
+                            <span class="field-name" th:utext="#{i18n.code_caption}">reach Code</span>
+                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                        </label>
+                        <br />
+                        <input
+                            type="text" class="input-sm pull-left" id="reachCode"
+                            data-rule-digits="true" name="reachCode" placeholder=""
+                            required="required" maxlength="4" pattern="^[0-9]{1,4}$"/>
+                    </div>
+
+                    <div class="form-group pad-left-col">
+                        <label for="reachName"
+                               th:utext="#{i18n.name_caption}">reach name</label>
+                        <br />
+                        <input type="text" class="input-sm pull-left" id="reachName" name="reachName" placeholder="" maxlength="100"/>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 mrgn-tp-md mrgn-bttm-lg">
+                            <table class="table table-bordered table-hover" id="edit_table">
+                                <thead>
+                                <tr style="background-color: #D3D3D3;">
+                                    <th class="text-center" th:utext="#{i18n.length_title}">length</th>
+                                    <th class="text-center"
+                                        th:utext="#{i18n.reach_updateyear_title}">update year
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><label for="addReachLength"></label><input
+                                            type="text" id="addReachLength" class="input-sm"
+                                            name="addReachLength" placeholder="" data-rule-number="true"
+                                            min="0" max="999999.9" maxlength="8"/></td>
+                                    <td><label for="addUpdatedYear"></label><input
+                                            type="text" id="addUpdatedYear" class="input-sm"
+                                            name="addUpdatedYear" placeholder="" data-rule-digits="true"
+                                            minlength="4" maxlength="4"/></td>
+                                    <td class="text-center"><a href="#" role="button"><span
+                                            style="font-size: 1.3em;"
+                                            class="glyphicon glyphicon-minus-sign"
+                                            aria-hidden="true"></span></a></td>
+                                    <td class="text-center"><a href="#" role="button"><span
+                                            style="font-size: 1.3em;"
+                                            class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:replace="layout/base :: loc_form_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LOCATIONS')}__})"/>
+                </form>
+            </div>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/reaches/app.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

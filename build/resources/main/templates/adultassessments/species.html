@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.aa.species.title}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var theAA = /*[[${referaa}]]*/;
+        var speciecodesList = /*[[${allspeciecodeslist}]]*/;
+        var trapChamberList = /*[[${refcodelist.get('TRAP_CHAMBER').codeValues}]]*/;
+        var fishSexList = /*[[${refcodelist.get('SEX').codeValues}]]*/;
+        var spawConditionList = /*[[${refcodelist.get('MATURITY').codeValues}]]*/;
+        var speciemenStateList = /*[[${refcodelist.get('SPECIMEN_STATE').codeValues}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <input type="hidden" value="#" id="referaa_id"
+                   th:attr="value=${referaa != null} ? ${referaa.id} : '#'"/>
+            <div class="wb-frmvld col-md-12">
+                <form id="edit_form" class="form-horizontal mrgn-bttm-md"
+                      role="form">
+                    <div class="row brdr-bttm">
+                        <div class="row col-md-12 mrgn-bttm-md">
+                            <div class="row col-sm-12">
+                                <p class="lead" th:utext="'<b>' + #{page.adultassessment} + ' - ' + #{i18n.species_title} + '</b>'">
+                                    Adult Assessments - Species</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label>
+                                    <span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="sampleCode"
+                                       name="sampleCode"
+                                       th:attr="value=${referaa != null} ? ${referaa.sample.sampleCode}"
+                                       readonly="true"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="sampleStatus">
+                                    <span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="sampleStatus"
+                                       name="sampleStatus"
+                                       th:attr="value=${referaa != null} ? ${referaa.sample.sampleStatus}"
+                                       readonly="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row brdr-bttm mrgn-bttm-sm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.species_title}" style="color: #6A5ACD">Species</h5>
+                        </div>
+                        <table id="species_table" class="mrgn-bttm-sm"
+                               style="width: 100%; border-collapse: separate; border-spacing: 0 10px">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th colspan="5" class="text-center"
+                                    th:utext="#{i18n.num_firsttime_capture_title}">Number of
+                                    1st Time Captures
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th class="text-center">
+                                    <label class="required">
+                                        <span th:utext="#{i18n.species_title}">Species</span>
+                                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                    </label>
+                                </th>
+                                <th class="text-center">
+                                    <label class="required">
+                                        <span th:utext="#{i18n.trapchamber_title}">Trap Chamber</span>
+                                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                    </label>
+                                </th>
+                                <th class="text-center" th:utext="#{i18n.males_title}">Males</th>
+                                <th class="text-center" th:utext="#{i18n.females_title}">Females</th>
+                                <th class="text-center" th:utext="#{i18n.alive_title}">Alive</th>
+                                <th class="text-center" th:utext="#{i18n.dead_title}">Dead</th>
+                                <th class="text-center" th:utext="#{i18n.total_title}">Total</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="specie">
+                                <td class="text-center"><label for="aaspecies"></label><input type="text" id="aaspecies"
+                                                                                      required="required"
+                                                                                      name="aaspecies" class="input-sm"
+                                                                                      list="allspecies"
+                                                                                      data-ap-auto-select-first="true"/>
+                                    <datalist id="allspecies">
+                                        <option th:each="entry : ${allspeciecodeslist}"
+                                                th:value="${entry.showText}"><input type="hidden"
+                                                                                    th:attr="value=${entry.id}"/>
+                                        </option>
+                                    </datalist>
+                                </td>
+                                <td class="text-center"><label for="trapChamber"></label>
+                                    <select class="input-sm" id="trapChamber" required="required"
+                                            th:attr="name=${refcodelist.get('TRAP_CHAMBER').codeType}">
+                                        <option value="" th:utext="#{i18n.default.select}">Select One...</option>
+                                        <option th:each="entry : ${refcodelist.get('TRAP_CHAMBER').codeValues}"
+                                                th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+                                    </select></td>
+                                <td class="text-center"><label for="males"></label>
+                                    <input type="text" class="input-sm" size="4" name="#" id="males"
+                                           data-rule-digits="true" maxlength="4" placeholder=""/></td>
+                                <td class="text-center"><label for="females"></label>
+                                    <input type="text" class="input-sm" size="4" name="#" id="females" data-rule-number="true"
+                                           data-rule-digits="true" maxlength="4" placeholder=""/></td>
+                                <td class="text-center"><label for="alive"></label>
+                                    <input type="text" class="input-sm" size="4" name="#" id="alive"
+                                           data-rule-digits="true" maxlength="4" placeholder=""/></td>
+                                <td class="text-center"><label for="dead"></label>
+                                    <input type="text" class="input-sm" size="4" name="#" id="dead"
+                                           data-rule-digits="true" maxlength="4" placeholder=""/></td>
+                                <td class="text-center">
+                                    <input type="text" class="input-sm" size="4" name="#" placeholder=""
+                                           readOnly="true"/></td>
+                                <td class="text-center icon"><a href="#" role="button"><span
+                                        style="font-size: 1.3em;"
+                                        class="glyphicon glyphicon-expand"
+                                        aria-hidden="true"></span></a></td>
+                                <td class="text-center icon"><a href="#" role="button"><span
+                                        style="font-size: 1.3em;"
+                                        class="glyphicon glyphicon-minus-sign"
+                                        aria-hidden="true"></span></a></td>
+                                <td class="text-center icon"><a href="#" role="button"><span
+                                        style="font-size: 1.3em;"
+                                        class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+                                </td>
+                                <td><input type="hidden" value=""/></td>
+                            </tr>
+                            <tr class="clickable" hidden>
+                                <td colspan="9">
+                                    <div class="row col-md-12 col-sm-offset-1">
+                                        <table id="individual_table"
+                                               style="width: 90%; border-collapse: separate; border-spacing: 0 5px">
+                                            <thead>
+                                            <th></th>
+                                            <th class="text-center" th:utext="#{i18n.fishsex_title}">Sex</th>
+                                            <th class="text-center" th:utext="#{i18n.fishlength_title}">Length(mm)</th>
+                                            <th class="text-center" th:utext="#{i18n.fishweight_title}">Weight(g)</th>
+                                            <th class="text-center" th:utext="#{i18n.spawning_condition_title}">Spawning
+                                                Condition
+                                            </th>
+                                            <th class="text-center" th:utext="#{i18n.specimen_state_title}">Specimen
+                                                State
+                                            </th>
+                                            <th class="text-center" th:utext="#{i18n.recapture_title}">Recapture</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            </thead>
+                                            <tbody>
+                                            <tr class="individual">
+                                                <td class="text-center"><input type="text"
+                                                                               class="input-sm" value="1" name="#"
+                                                                               readonly="true"
+                                                                               size="1"/></td>
+                                                <td class="text-center">
+                                                    <select class="input-sm" id="aaFishSex"
+                                                            th:attr="name=${refcodelist.get('SEX').codeType}">
+                                                        <option value=""></option>
+                                                    <option th:each="entry : ${refcodelist.get('SEX').codeValues}"
+                                                            th:value="${entry.codeName}"
+                                                            th:utext="${entry.showText}"
+                                                            th:attr="selected=${entry.codeName == 'sex2'} ? true"></option>
+                                                </select></td>
+                                                <td class="text-center"><label for="len"></label>
+                                                    <input type="text" class="input-sm" size="2" name="#" id="len"
+                                                           data-rule-digits="true" min="300" max="600"/></td>
+                                                <td class="text-center"><label for="weight"></label>
+                                                    <input type="text" class="input-sm" size="2" name="#" id="weight"
+                                                           data-rule-number="true" maxlength="11" min="100" max="500"/></td>
+                                                <td class="text-center"><select class="input-sm"
+                                                                                id="aaSpawningCondition"
+                                                                                th:attr="name=${refcodelist.get('MATURITY').codeType}">
+                                                    <option value=""></option>
+                                                    <option
+                                                            th:each="entry : ${refcodelist.get('MATURITY').codeValues}"
+                                                            th:value="${entry.codeName}"
+                                                            th:utext="${entry.showText}"></option>
+                                                </select></td>
+                                                <td class="text-center"><select class="input-sm"
+                                                                                id="aaSpecimenState"
+                                                                                th:attr="name=${refcodelist.get('SPECIMEN_STATE').codeType}">
+                                                    <option value=""></option>
+                                                    <option
+                                                            th:each="entry : ${refcodelist.get('SPECIMEN_STATE').codeValues}"
+                                                            th:value="${entry.codeName}"
+                                                            th:utext="${entry.showText}"></option>
+                                                </select></td>
+                                                <td class="text-center"><label class="radio-inline"><input
+                                                        type="radio" id="radio_yes" name="optradio_recap"
+                                                        checked="checked" value="yes"
+                                                        th:utext="#{i18n.yes_title}"/></label><label
+                                                        class="radio-inline"><input type="radio"
+                                                                                    id="radio_no" name="optradio_recap"
+                                                                                    value="no"
+                                                                                    th:utext="#{i18n.no_title}"/></label>
+                                                </td>
+                                                <td class="text-center icon"><a href="#" role="button"><span
+                                                        style="font-size: 1.3em;"
+                                                        class="glyphicon glyphicon-minus-sign"
+                                                        aria-hidden="true"></span></a></td>
+                                                <td class="text-center icon"><a href="#" role="button"><span
+                                                        style="font-size: 1.3em;"
+                                                        class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+                                                </td>
+                                                <td><input type="hidden" value=""/></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="displayMessage"></div>
+        <div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+            <button id="button_save" type="button"
+                    class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+                    th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_ADULT_SPAWNING')}__}">Save
+            </button>
+            <button id="button_end" type="button"
+                    class="btn btn-success mrgn-lft-sm mrgn-rght-sm"
+                    th:utext="#{i18n.button_end_caption}">End of Assessment
+            </button>
+            <button id="button_addnew_sameloc" type="button" disabled="true"
+                    class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+                    th:utext="#{i18n.button_addnew_sameloc_caption}">Add New From Same Location
+            </button>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/adultassessments/species.js}"></script>
+</th:block>
+</body>
+</html>

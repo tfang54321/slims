@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.tr_title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<div class="col-md-12">
+					<div id="section_title">
+						<p class="lead" th:utext="'<b>' + #{i18n.tr_title} + '</b>'">
+							Treatments</p>
+					</div>
+
+					<div class="row col-sm-6 mrgn-bttm-sm">
+						<button id="btnRefresh" class="btn btn-default">
+							<span th:utext="#{i18n.refresh}">Refresh</span> <span class="glyphicon glyphicon-refresh"></span>
+						</button>&nbsp;
+						<label for="filterYear" th:utext="#{i18n.tr.start_year}">Year</label>&nbsp;
+						<select id="yearAdjust">
+									<option value="equal">&#61;</option>
+									<option value="gte">&#62;&#61;</option>
+									<option value="lte">&#60;&#61;</option>
+						</select>
+						<select id="filterYear">
+						    <option value="all" th:utext="#{i18n.all_title}">All</option>
+							<th:block th:each="year : ${trYear}">
+								<option th:value="${year}" th:utext="${year}">####</option>
+							</th:block>							
+						</select>
+					</div>
+
+					<table id="tr_list_table" class="wb-tables table list-table table-hover table-bordered" style="width: 100%">
+						<thead>
+							<tr>
+								<th th:utext="#{i18n.sample_code_caption}">Sample Id</th>
+								<th th:utext="#{i18n.lake_caption}">Lake</th>
+								<th th:utext="#{i18n.stream_caption}">Stream</th>
+								<th th:utext="#{i18n.sample_status_title}">Status</th>
+								<th th:utext="#{i18n.tr_start_title}">Treatment Start</th>
+								<th th:utext="#{i18n.tr_end_title}">Treatment End</th>
+								<th></th>
+							</tr>
+						</thead>
+					</table>
+					<div id="displayInfoMessage"></div>
+					<div th:replace="layout/base :: common_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_TREATMENTS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_TREATMENTS')}__})" />
+
+					<!-- <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+						<button id="button_add" type="button"
+							class="btn btn-success mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_add_caption}">Add</button>
+						<button id="button_edit" type="button"
+							class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_edit_caption}">Edit</button>
+						<button id="button_delete" type="button"
+							class="btn btn-warning mrgn-lft-sm mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_delete_caption}">Delete</button>
+					</div> -->
+				</div>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/treatments/app.js}"></script>
+	</th:block>
+</body>
+</html>

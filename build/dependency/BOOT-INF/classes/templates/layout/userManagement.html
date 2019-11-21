@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="userManagementForm">
+    <section th:if="${successMessage != null}" class="alert alert-success" onclick="$(this).hide()">
+        <p th:utext="${successMessage}"></p>
+    </section>
+    <section th:if="${errorMessage != null}" class="alert alert-danger" onclick="$(this).hide()">
+        <p th:utext="${errorMessage}"></p>
+    </section>
+    <section th:if="${infoMessage != null}" class="alert alert-info" onclick="$(this).hide()">
+        <p th:utext="${infoMessage}"></p>
+    </section>
+    <div class="panel panel-primary">
+        <header class="panel-heading">
+            <h3 class="panel-title" th:utext="#{page.settings.user_mgmt.users}">Title</h3>
+        </header>
+        <div class="panel-body">
+            <section class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="uRoles" class="required">
+                                    <span class="field-name" th:utext="#{i18n.role_caption}">Role</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select class="full-width" id="uRoles" th:field="*{role}" required="required">
+                                    <th:block th:each="role : ${roles}">
+                                        <option th:value="${role.roleId}" th:utext="${role.rolename}">Text</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row mrgn-bttm-md">
+                            <div class="col-md-7">
+                                <label for="uUName" class="required">
+                                    <span class="field-name" th:utext="#{i18n.username_caption}">Username</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="text" class="full-width" id="uUName" required="required" th:field="*{ntPrincipal}"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="activeYes">
+                                    <span class="field-name" th:utext="#{i18n.active_caption}">Enabled?</span>
+                                </label>
+                                <br/>
+                                <input type="radio" id="activeYes" value="1" th:field="*{activeFlag}"/>&nbsp;
+                                <label for="activeYes" th:utext="#{i18n.yes_title}">Yes</label>&nbsp;&nbsp;
+                                <input type="radio" id="activeNo" value="0" th:field="*{activeFlag}"/>&nbsp;
+                                <label for="activeNo" th:utext="#{i18n.no_title}">No</label>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"><div class="col-md-12"><hr /></div></div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-8 mrgn-bttm-md">
+                                <label for="uId" th:utext="#{i18n.idnumber_title}">User ID</label>
+                                <br/>
+                                <input type="text" readonly="readonly" class="full-width" th:field="*{userId}" id="uId" th:attr="data-text-only=${'true'}"/>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="uFName" th:utext="#{i18n.first_name_caption}">First Name</label>
+                                <br/>
+                                <input type="text" class="full-width" id="uFName" readonly="readonly" th:field="*{firstName}" th:attr="data-text-only=${'true'}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label for="uLName" th:utext="#{i18n.last_name_caption}">Last Name</label>
+                                <br/>
+                                <input type="text" class="full-width" id="uLName"  readonly="readonly" th:field="*{lastName}" th:attr="data-text-only=${'true'}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.runnet_title}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var speciecodesList = /*[[${allspeciecodeslist}]]*/;
+        var fishSexList = /*[[${refcodelist.get('SEX').codeValues}]]*/;
+        var speciemenStateList = /*[[${refcodelist.get('SPECIMEN_STATE').codeValues}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <input type="hidden" value="#" id="referfm_id"
+                   th:attr="value=${referfm != null} ? ${referfm.id}"/>
+            <div class="col-md-12">
+                <div id="section_title">
+                    <p class="lead"
+                       th:utext="'<b>' + #{i18n.fm_title} + ' - ' + #{i18n.runnet_title} + '</b>'">Fish Modules -
+                        Run/Net</p>
+                </div>
+                <div id="sample">
+                    <p id="sample_id">
+                        <b th:utext="#{i18n.sample_code_caption} + ': '">Sample ID: </b>
+                        <mark th:utext="${referfm != null} ? ${referfm.sample.sampleCode}" class="bg-info">#
+                        </mark>
+                    </p>
+                </div>
+                <div id="offlineid" hidden="true">
+                    <p>
+                        <b th:utext="#{i18n.offlineid_title} + ': '">Offline ID: </b>
+                        <mark id="offline_id" class="bg-info">#</mark>
+                    </p>
+                </div>
+                <table id="runnet_list_table"
+                       class="wb-tables table list-table table-hover table-bordered"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th th:utext="#{i18n.runnet_number_title}">Run/Net Number</th>
+                        <th th:utext="#{i18n.num_of_species}">Number of Species</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="displayInfoMessage"></div>
+                <div>
+                    <div th:replace="layout/base :: loc_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_FISH_COLLECTIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_FISH_COLLECTIONS')}__})"/>
+                    <div class="pull-right mrgn-tp-md mrgn-bttm-sm">
+                        <button id="button_exit" type="button" class="btn btn-primary mrgn-rght-sm"
+                                th:utext="#{i18n.button_exit_caption}">Exit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="runnet_form" hidden="true"
+                 class="wb-frmvld col-md-12 brdr-tp mrgn-tp-md mrgn-bttm-sm mrgn-lft-sm mrgn-rght-sm background-light">
+                <h4 th:utext="#{i18n.add_edit_runnet_title}">Add/Edit Runnet</h4>
+                <form id="edit_form" class="form-horizontal mrgn-tp-md" role="form">
+                    <input type="hidden" value="#" id="runnet_id"/>
+                    <div class="row brdr-bttm mrgn-tp-sm mrgn-bttm-sm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.species_capbyrun_title}"
+                                style="color: #6A5ACD">Run/Net-Species Captured by Run</h5>
+                        </div>
+                        <div class="col-md-12 col-sm-6">
+                            <div class="col-md-4 col-sm-12 mrgn-bttm-sm">
+                                <label for="runnetNumber" class="required"> <span class="field-name"
+                                                                                  th:utext="#{i18n.runnet_number_title}">Run/Net
+											Number</span> <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label> <br/> <input type="text" class="input-sm" id="runnetNumber"
+                                                      required="required" name="runnetNumber" placeholder="" max="9"
+                                                      min="0" data-rule-digits="true" maxlength="1"/>
+                            </div>
+                            <div class="col-md-4 col-sm-12 mrgn-bttm-sm">
+                                <label for="personElecFishing"> <span
+                                        class="field-name" th:utext="#{i18n.persons_elecfishing_title}">Persons
+											Electro-fishing</span>
+                                </label> <br/> <input type="text" class="input-sm"
+                                                      id="personElecFishing" name="personElecFishing" placeholder=""
+                                                      max="99" min="0" data-rule-digits="true"
+                                                      maxlength="2"/>
+                            </div>
+                            <div class="col-md-4 col-sm-12 mrgn-bttm-sm">
+                                <label for="personCatching"> <span class="field-name"
+                                                                   th:utext="#{i18n.persons_catching_title}">Persons
+											Catching</span>
+                                </label> <br/> <input type="text" class="input-sm"
+                                                      id="personCatching" name="personCatching" placeholder=""
+                                                      max="99" min="0" data-rule-digits="true"
+                                                      maxlength="2"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-sm-6">
+                            <div class="col-md-4 col-sm-12 mrgn-bttm-sm">
+                                <label for="est_duration"> <span class="field-name" th:utext="#{i18n.estimated_duration_title}">Estimated Duration</span>
+                                </label> <br/> <input type="text" class="input-sm" id="est_duration"
+                                                      name="est_duration" placeholder="mm" max="99999" min="0"
+                                                      data-rule-digits="true" maxlength="5"/><label
+                                    th:utext="#{form.minutes}">minutes</label>
+                            </div>
+
+                            <div class="col-md-4 col-sm-12 mrgn-bttm-sm">
+                                <label for="measured_duration">
+                                    <span class="field=name" th:utext="#{i18n.measured_duration_title}">
+                                        Measured Duration</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm"
+                                                      id="measured_duration" name="measured_duration"
+                                                      placeholder="hhh:mm" maxlength="6"
+                                                      pattern="^([0-9]|[0-9][0-9]|[0-9][0-9][0-9]):[0-5][0-9]$"/>
+                                <label th:utext="#{form.hours_minutes}">hours:minutes</label>
+                            </div>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                                <h5 class="remove_margin" th:utext="#{i18n.elecfishing_setting_title}"
+                                    style="color: #6A5ACD">Electro-Fishing Settings</h5>
+                            </div>
+                            <div class="row col-md-10 col-sm-12 mrgn-bttm-sm">
+                                <div class="radio-inline" id="radios_elecsetting">
+                                    <label class="radio-inline"> <input type="radio"
+                                                                        checked="checked" id="radio_fish"
+                                                                        name="optradio_elecsetting"
+                                                                        value="fish" th:utext="#{i18n.fish_title}"/>
+                                    </label> <label class="radio-inline"> <input type="radio"
+                                                                                 id="radio_other"
+                                                                                 name="optradio_elecsetting" value="other"
+                                                                                 th:utext="#{i18n.other_title}"/></label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="col-md-12 mrgn-bttm-sm">
+                                    <label for="peak_vol"> <span class="field-name"
+                                                                 th:utext="#{i18n.field_peakvol_caption}">Peak Voltage</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="peak_vol"
+                                                          size="5" name="peak_vol" placeholder="" value="250" max="999"
+                                                          min="0" data-rule-digits="true" maxlength="3"/><label
+                                        th:utext="'&nbsp;' + #{form.volts}">volts</label>
+                                </div>
+                                <div class="col-md-12 mrgn-bttm-sm">
+                                    <label for="burst_mode"> <span class="field-name"
+                                                                   th:utext="#{i18n.burst_mode_title}">Burst Mode</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="burst_mode"
+                                                          size="5" name="burst_mode" placeholder="" value="0" max="999"
+                                                          min="0" data-rule-digits="true" maxlength="3"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="row mrgn-bttm-sm">
+                                    <label for="slow_rate"> <span class="field-name"
+                                                                  th:utext="#{i18n.slow_rate_title}">Slow Rate</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="slow_rate"
+                                                          size="5" name="slow_rate" placeholder="" value="6" max="999.9"
+                                                          maxlength="5" data-rule-number="true"/><label>&nbsp;pps</label>
+                                </div>
+
+                                <div class="row mrgn-bttm-sm">
+                                    <label for="fast_rate"> <span class="field-name"
+                                                                  th:utext="#{i18n.fast_rate_title}">Fast Rate</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="fast_rate"
+                                                          size="5" name="fast_rate" placeholder="" value="60"
+                                                          max="999.9" maxlength="5" data-rule-number="true"/><label>&nbsp;pps</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="row mrgn-bttm-sm">
+                                    <label for="slow_duty"> <span class="field-name"
+                                                                  th:utext="#{i18n.slow_duty_title}">Slow Duty</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="slow_duty"
+                                                          size="5" maxlength="3" name="slow_duty" placeholder="" value="10" max="100"
+                                                          min="0" data-rule-digits="true"/><label>&nbsp;%</label>
+                                </div>
+                                <div class="row mrgn-bttm-sm">
+                                    <label for="fast_duty"> <span class="field-name"
+                                                                  th:utext="#{i18n.fast_duty_title}">Fast Duty</span>
+                                    </label> <br/> <input type="text" class="input-sm" id="fast_duty"
+                                                          value="10" size="5" maxlength="3" name="fast_duty" placeholder="" max="100"
+                                                          min="0" data-rule-digits="true"/><label>&nbsp;%</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-sm-12">
+                            <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                                <h5 class="remove_margin" th:utext="#{i18n.species_title}" style="color: #6A5ACD">Species</h5>
+                            </div>
+                            <table id="species_table" class="mrgn-bttm-sm"
+                                   style="width: 100%; border-collapse: separate; border-spacing: 0 10px">
+                                <thead>
+                                <th class="text-center"><label class="required"><span
+                                        th:utext="#{i18n.species_title}">Species</span> <strong
+                                        class="required" th:utext="#{form.required}">(required)</strong></label></th>
+                                <th class="text-center" th:utext="#{i18n.total_caught_title}">Total
+                                    Caught
+                                </th>
+                                <th class="text-center" th:utext="#{i18n.total_observed_title}">Total
+                                    Observed
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                <tr class="specie">
+                                    <td class="text-center"><label for="species"></label><input
+                                            type="text" id="species" required="required" name="fmspecies"
+                                            class="input-sm" list="allspecies" data-ap-auto-select-first="true"/>
+                                        <datalist
+                                                id="allspecies">
+                                            <option th:each="entry : ${allspeciecodeslist}"
+                                                    th:value="${entry.showText}"><input type="hidden"
+                                                                                        th:attr="value=${entry.id}"/>
+                                            </option>
+                                        </datalist>
+                                    </td>
+                                    <td class="text-center"><label for="totalCaught"></label><input
+                                            type="text" class="input-sm" size="5" name="#"
+                                            id="totalCaught" value="0" data-rule-digits="true"
+                                            maxlength="5"/></td>
+                                    <td class="text-center"><label for="totalObserved"></label><input
+                                            type="text" class="input-sm" size="5" name="#"
+                                            id="totalObserved" value="0" data-rule-digits="true"
+                                            maxlength="5" placeholder=""/></td>
+                                    <td class="text-center icon"><a href="#" role="button"
+                                                                    th:title="#{i18n.btn.expand}"><span
+                                            style="font-size: 1.3em;" class="glyphicon glyphicon-expand"
+                                            aria-hidden="true"></span></a></td>
+                                    <td class="text-center icon"><a href="#" role="button"
+                                                                    th:title="#{i18n.btn.remove}"><span
+                                            style="font-size: 1.3em;"
+                                            class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></a></td>
+                                    <td class="text-center icon"><a href="#" role="button"
+                                                                    th:title="#{i18n.btn.add}"><span
+                                            style="font-size: 1.3em;"
+                                            class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+                                    </td>
+                                    <td><input type="hidden" value=""/></td>
+                                </tr>
+                                <tr class="clickable" hidden>
+                                    <td colspan="9">
+                                        <div class="row col-md-12 col-sm-offset-1">
+                                            <table id="individual_table"
+                                                   style="width: 90%; border-collapse: separate; border-spacing: 0 10px">
+                                                <thead>
+                                                <th></th>
+                                                <th class="text-center"
+                                                    th:utext="#{i18n.specimen_state_title}">Specimen
+                                                    State
+                                                </th>
+                                                <th class="text-center" th:utext="#{i18n.fishsex_title}">Sex</th>
+                                                <th class="text-center" th:utext="#{i18n.kept_title}">Kept</th>
+                                                <th class="text-center" th:utext="#{i18n.fishlength_title}">Length(mm)</th>
+                                                <th class="text-center" th:utext="#{i18n.fishweight_title}">Weight(g)</th>
+                                                <th class="text-center"
+                                                    th:utext="#{i18n.date_measured_title}">Date Measured
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                </thead>
+                                                <tbody>
+                                                <tr class="individual">
+                                                    <td class="text-center"><input type="text"
+                                                                                   class="input-sm" value="1"
+                                                                                   readonly="true" size="1"/></td>
+                                                    <td class="text-center"><label for="fmSpecimenState"></label><select
+                                                            class="input-sm" id="fmSpecimenState"
+                                                            th:attr="name=${refcodelist.get('SPECIMEN_STATE').codeType}">
+                                                        <option value=""></option>
+                                                        <option
+                                                                th:each="entry : ${refcodelist.get('SPECIMEN_STATE').codeValues}"
+                                                                th:value="${entry.codeName}"
+                                                                th:utext="${entry.showText}"></option>
+                                                    </select></td>
+                                                    <td class="text-center"><label for="fmFishSex"></label><select
+                                                            class="input-sm" id="fmFishSex"
+                                                            th:attr="name=${refcodelist.get('SEX').codeType}">
+                                                        <option
+                                                                th:each="entry : ${refcodelist.get('SEX').codeValues}"
+                                                                th:value="${entry.codeName}"
+                                                                th:utext="${entry.showText}"
+                                                                th:attr="selected=${entry.codeName == 'sex2'} ? true"></option>
+                                                    </select></td>
+                                                    <td class="text-center"><label class="radio-inline"><input
+                                                            type="radio" id="radio_yes" name="optradio_hept"
+                                                            checked="checked" value="yes"
+                                                            th:utext="#{i18n.yes_title}"/> </label><label
+                                                            class="radio-inline"><input type="radio"
+                                                                                        id="radio_no" name="optradio_hept"
+                                                                                        value="no"
+                                                                                        th:utext="#{i18n.no_title}"/>
+                                                    </label></td>
+                                                    <td class="text-center"><label for="lengthMM"></label><input
+                                                            type="text" class="input-sm" size="2" name="#"
+                                                            id="lengthMM" value="0" data-rule-digits="true"
+                                                            maxlength="4"/></td>
+                                                    <td class="text-center"><label for="weightG"></label><input
+                                                            type="text" class="input-sm" size="12" name="#"
+                                                            id="weightG" value="0" data-rule-number="true"
+                                                            max="999999.99" min="0" maxlength="9"/></td>
+                                                    <td class="text-center"><label for="dateMeasured"></label><input
+                                                            type="date" class="input-sm" name="#" id="dateMeasured"/></td>
+                                                    <td class="text-center icon"><a href="#"
+                                                                                    role="button"
+                                                                                    th:title="#{i18n.btn.remove}"><span
+                                                            style="font-size: 1.3em;"
+                                                            class="glyphicon glyphicon-minus-sign"
+                                                            aria-hidden="true"></span></a></td>
+                                                    <td class="text-center icon"><a href="#"
+                                                                                    role="button"
+                                                                                    th:title="#{i18n.btn.add}"><span
+                                                            style="font-size: 1.3em;"
+                                                            class="glyphicon glyphicon-plus-sign"
+                                                            aria-hidden="true"></span></a></td>
+                                                    <td><input type="hidden" value=""/></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group mrgn-lft-lg">
+                        <button type="submit" id="button_save"
+                                class="btn btn-success mrgn-lft-md mrgn-rght-md"
+                                th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_FISH_COLLECTIONS')}__}">Save
+                        </button>
+                        <button type="button" id="button_cancel"
+                                class="btn btn-warning mrgn-lft-md mrgn-rght-md"
+                                th:utext="#{i18n.button_cancel_caption}">Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/fishmodules/runnetlist.js}"></script>
+</th:block>
+</body>
+</html>

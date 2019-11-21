@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.main_caption}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var theAA = /*[[${referaa}]]*/;
+        var copyAA = /*[[${copyaa}]]*/;
+        var allthelakes = /*[[${alllakeslist}]]*/;
+        var allthestreams = /*[[${allstreamslist}]]*/;
+        var allthebranches = /*[[${allbrancheslist}]]*/;
+        var allthestations = /*[[${allstationslist}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <input type="hidden" value="#" id="referaa_id"
+                   th:attr="value=${referaa != null} ? ${referaa.id}"/>
+            <div class="wb-frmvld col-md-12">
+                <form id="edit_form" class="form-horizontal" role="form">
+                    <div class="row brdr-bttm">
+                        <div class="row col-sm-12 mrgn-bttm-md">
+                            <div class="row col-sm-12">
+                                <p class="lead" th:utext="'<b>' + #{page.adultassessment} + ' - ' + #{i18n.location_title} + '</b>'">
+                                    Adult Assessments - Location</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="sampleCode">
+                                    <span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="sampleCode"
+                                       name="sampleCode" placeholder="" readonly="true"/>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="sampleStatus">
+                                    <span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+                                </label>
+                                <br/>
+                                <input
+                                    type="text" class="input-sm" id="sampleStatus"
+                                    name="sampleStatus" value="DRAFT" readonly="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row brdr-bttm mrgn-tp-sm">
+                        <div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+                            <h5 class="remove_margin" th:utext="#{i18n.location_title}" style="color: #6A5ACD">Location</h5>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="row col-sm-12 mrgn-bttm-md">
+                                <label for="aaLake" class="required">
+                                    <span class="field-name" th:utext="#{i18n.lake_caption}">Lake</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm"
+                                    id="aaLake" name="aaLake"
+                                    list="alllakes"
+                                    required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="alllakes">
+                                    <option th:each="entry : ${alllakeslist}"
+                                            th:value="${entry.showText}"><input type="hidden"
+                                                                                th:attr="value=${entry.id}"/></option>
+                                </datalist>
+                            </div>
+                            <div id="aaStreamDiv" class="row col-sm-12 mrgn-bttm-md">
+                                <label for="aaStream" class="required">
+                                    <span class="field-name" th:utext="#{i18n.stream_caption}">Stream</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                    type="text" id="aaStream" name="aaStream" list="allstreams" class="input-sm"
+                                    required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allstreams">
+                                </datalist>
+                            </div>
+                            <div id="aaBranchDiv" class="row col-sm-12 mrgn-bttm-md">
+                                <label for="aaBranch" class="required">
+                                    <span class="field-name" th:utext="#{i18n.branchlentic_title}">BranchLentic</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                    type="text" id="aaBranch" name="aaBranch" list="allbranches" class="input-sm"
+                                    required="required" data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allbranches">
+                                </datalist>
+                            </div>
+                            <div id="aaStationFromDiv" class="row col-sm-12 mrgn-bttm-md">
+                                <label for="aaStationFrom" class="required">
+                                    <span class="field-name" th:utext="#{i18n.station_caption}">Station</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="text" class="input-sm" id="aaStationFrom" name="aaStationFrom"
+                                       list="allFromStations" required="required"
+                                       data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+                                <datalist id="allFromStations">
+                                </datalist>
+                                <select class="input-sm fas" id="stationFromAdjust" name="stationFromAdjust">
+                                    <option class='fas fa-equals' value="equal">&#xf52c;</option>
+                                    <option class='fas fa-minus' value="minus">&#xf068;</option>
+                                    <option class='fas fa-plus' value="plus">&#xf067;</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-5 col-md-5">
+                            <div class="row col-sm-12 mrgn-bttm-md">
+                                <label for="inspectDate" class="required">
+                                    <span class="field-name" th:utext="#{i18n.inspection_date_title}">Inspection Date</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input type="date" id="inspectDate" name="inspectDate" class="input-sm"
+                                       required="required"/>
+                            </div>
+                            <div class="row col-sm-12 mrgn-bttm-md">
+                                <label for="timeOfCheck" class="required">
+                                    <span class="field-name" th:utext="#{i18n.time_check_title}">Time of Check</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <input
+                                    type="text" class="input-sm time-start" name="timeOfCheck"
+                                    id="timeOfCheck" maxlength="5" minlength="5"
+                                    placeholder="HH:mm(24h)" required="required"
+                                    th:attr="data-msg-pattern=#{i18n.time_format_24h}"/>
+                            </div>
+                            <div class="row col-sm-12 mrgn-bttm-md">
+                                <label for="aa_location">
+                                    <span class="field-name" th:utext="#{i18n.location_title}">Location</span>
+                                </label>
+                                <br/>
+                                <textarea id="aa_location" name="aa_location"
+                                          class="input-sm" rows="2" cols="80" maxlength="250"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="displayMessage"></div>
+        <div th:replace="layout/base :: common_flow_buttons(saveEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_ADULT_SPAWNING')}__})"/>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/adultassessments/edit.js}"></script>
+</th:block>
+</body>
+</html>

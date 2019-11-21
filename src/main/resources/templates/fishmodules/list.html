@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{i18n.fm_title}"></title>
+    <th:block th:replace="layout/base :: shared_css"/>
+</head>
+<body onload="loaderControl();">
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+            <div id="online_data" class="col-md-12">
+                <div class="row col-sm-12" id="section_title_online">
+                    <p class="lead col-sm-6" th:utext="'<b>' + #{i18n.fm_title} + '</b>'">
+                        Fish Modules</p>
+                    <button type="button" id="button_showoffline" style="display: none;"
+                            class="btn btn-default pull-right mrgn-rght-sm"
+                            th:utext="#{i18n.button_showoffline_caption}">Show
+                        Offline Data
+                    </button>
+                </div>
+                <div class="row col-sm-6 mrgn-bttm-sm">
+                    <button id="btnRefresh" class="btn btn-default">
+                        <span th:utext="#{i18n.refresh}">Refresh</span> <span class="glyphicon glyphicon-refresh"></span>
+                    </button>&nbsp;
+                    <label for="filterYear" th:utext="#{i18n.sample_year}">Year</label>&nbsp;
+                    <select id="yearAdjust">
+									<option value="equal">&#61;</option>
+									<option value="gte">&#62;&#61;</option>
+									<option value="lte">&#60;&#61;</option>
+				    </select>
+                    <select id="filterYear">
+                        <option value="all" th:utext="#{i18n.all_title}">All</option>
+                        <th:block th:each="year : ${fmYear}">
+                            <option th:value="${year}" th:utext="${year}">####</option>
+                        </th:block>
+                    </select>
+                </div>
+                <table id="fm_list_table_online"
+                       class="wb-tables table list-table table-hover table-bordered"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th th:utext="#{i18n.sample_code_caption}">Sample Id</th>
+                        <th th:utext="#{i18n.lake_caption}">Lake</th>
+                        <th th:utext="#{i18n.stream_caption}">Stream</th>
+                        <th th:utext="#{i18n.branchlentic_title}">Branch-Lentic</th>
+                        <th th:utext="#{i18n.stationfrom_caption}">Station From</th>
+                        <th th:utext="#{i18n.stationto_caption}">Station To</th>
+                        <th th:utext="#{i18n.sample_status_title}">Status</th>
+                        <th th:utext="#{i18n.sample_date_caption}">Sample Date</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="displayInfoMessage"></div>
+                <div th:replace="layout/base :: common_edit_buttons(addEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_FISH_COLLECTIONS')}__},deleteEnabled=${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_DELETE_FISH_COLLECTIONS')}__})"/>
+            </div>
+            <div id="offline_data" class="col-md-12" hidden="true">
+                <div class="row col-sm-12" id="section_title_offline">
+                    <p class="lead col-sm-6"
+                       th:utext="'<b>' + #{i18n.fm_offline_title} + '</b>'">Fish Modules Offline Data</p>
+                    <div th:replace="layout/base :: offline_buttons"/>
+                </div>
+                <table id="fm_list_table_offline"
+                       class="wb-tables table list-table table-hover table-bordered"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th th:utext="#{i18n.offlineid_title}">Offline Id</th>
+                        <th th:utext="#{i18n.lake_caption}">Lake</th>
+                        <th th:utext="#{i18n.stream_caption}">Stream</th>
+                        <th th:utext="#{i18n.branchlentic_title}">Branch-Lentic</th>
+                        <th th:utext="#{i18n.stationfrom_caption}">Station From</th>
+                        <th th:utext="#{i18n.stationto_caption}">Station To</th>
+                        <th th:utext="#{i18n.sample_date_caption}">Sample Date</th>
+                        <th th:utext="#{i18n.update_date_title}">Update Date</th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="displayInfoMessageOffline"></div>
+                <div th:replace="layout/base :: common_edit_offline_buttons"/>
+            </div>
+        </div>
+        <div th:replace="layout/base :: shared_controls"/>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/fishmodules/app.js}"></script>
+</th:block>
+</body>
+</html>

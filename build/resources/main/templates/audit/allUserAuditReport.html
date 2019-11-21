@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="/js/datatable.js"></script>
+
+<title th:utext="#{page.settings.user_mgmt.audit.Allusers}"></title>
+
+
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<br />
+		<div class="row">
+			<div class="col-sm-6">
+				<!--  
+            <span class="h3" th:utext="#{page.settings.user_mgmt.audit.user}">User</span><th>(ID=</th><th th:text="${userID}"/><th>)Audit Report</th>
+        -->
+				<span class="h3"
+					th:utext="#{page.settings.user_mgmt.audit.Allusers}">All
+					Users Auditing Report</span>
+			</div>
+			<div>
+
+				<a href='list/report/download/all' target="_blank"  
+				style="float: right;"><span class="h3"
+					th:utext="#{i18n.button.download}">PDF</span><i
+					class="fa fa-download"></i>
+				</a>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-md-12" id="user-container">
+				<hr />
+
+
+
+
+				<table class="wb-tables table table-striped table-hover"
+					   id="allUsersManagementReportTable"
+					   data-wb-tables='
+                      {
+                         "order": [[0, "desc"]]
+                      }'>
+
+					<thead>
+					<tr>
+						<th th:utext="#{i18n.audit.report.rev}">REV</th>
+						<th th:utext="#{i18n.audit.report.userId}">User ID</th>
+						<th th:utext="#{i18n.audit.report.auditDate}">Date</th>
+						<th th:utext="#{i18n.audit.report.auditTime}">Time</th>
+						<th th:utext="#{i18n.audit.report.userName}">User Name</th>
+						<th th:utext="#{i18n.audit.report.actionName}">Field Name</th>
+						<th th:utext="#{i18n.audit.report.elementName_audit}">Action
+							Name
+						</th>
+						<th th:utext="#{i18n.audit.report.newValue}">New Value</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="audit: ${allUserAuditReport}">
+						<th th:text="${audit.rev}"/>
+						<th th:text="${audit.userID}"/>
+						<th th:text="${audit.auditDate}"/>
+						<th th:text="${audit.auditTime}"/>
+						<th th:text="${audit.userName}"/>
+						<th th:text="${audit.actionName}"/>
+						<th th:text="${audit.elementName_audit}"/>
+						<th th:text="${audit.newValue}"/>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</th:block>
+
+</body>
+</html>
+

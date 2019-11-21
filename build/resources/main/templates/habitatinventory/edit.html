@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.main_caption}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theHI = /*[[${referhi}]]*/;
+        var allthelakes = /*[[${alllakeslist}]]*/;
+        var allthestreams = /*[[${allstreamslist}]]*/;
+        var allthebranches = /*[[${allbrancheslist}]]*/;
+        var allthestations = /*[[${allstationslist}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referhi_id"
+					th:attr="value=${referhi != null} ? ${referhi.id}" />
+
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.hi_title} + ' - ' + #{i18n.main_caption} + '</b>'">
+										Habitat Inventory - Main</p>
+								</div>
+								<div class="row col-sm-12">
+									<div class="col-md-3 col-sm-6">
+										<label for="sampleCode">
+											<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="sampleCode"
+											name="sampleCode" placeholder="" readonly="true" />
+									</div>
+									<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+										<label for="sampleStatus">
+											<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+										</label>
+										<br/>
+										<input
+											type="text" class="input-sm" id="sampleStatus"
+											name="sampleStatus" value="DRAFT" readonly="true">
+									</div>
+									<div class="col-md-3 col-sm-6">
+										<label for="transectId" class="required">
+											<span class="field-name" th:utext="#{i18n.field_transect_id_caption}">Transect ID</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="transectId"
+											name="transectId" placeholder="" data-rule-digits="true" maxlength="3" required="required" />
+									</div>
+									<div class="col-md-3 col-sm-6">
+										<label for="inventoryDate" class="required">
+											<span class="field-name" th:utext="#{i18n.inventory_date_title}">Inventory Date</span>
+											<strong class="required" th:utext="#{form.required}">(required)</strong>
+										</label>
+										<br/>
+										<input type="date" class="input-sm" id="inventoryDate"
+											name="inventoryDate" required="required" />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.location_title}" style="color: #6A5ACD">Location</h5>
+							</div>
+							<div class="row col-md-12">
+								<div id="hiLakeDiv" class="col-md-4 col-sm-4">
+									<label for="hiLake" class="required">
+										<span class="field-name" th:utext="#{i18n.lake_caption}">Lake</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input type="text" class="input-sm"
+										   id="hiLake" name="hiLake" list="alllakes" required="required"
+										   data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="alllakes">
+										<option th:each="entry : ${alllakeslist}"
+												th:value="${entry.showText}"><input type="hidden"
+																					th:attr="value=${entry.id}" /></option>
+									</datalist>
+								</div>
+
+								<div id="hiStreamDiv" class="col-md-4 col-sm-4 mrgn-bttm-md">
+									<label for="hiStream" class="required">
+										<span class="field-name" th:utext="#{i18n.stream_caption}">Stream</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+											type="text" id="hiStream" name="hiStream" list="allstreams" class="input-sm"
+											required="required"
+											data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allstreams">
+									</datalist>
+								</div>
+								<div id="hiBranchDiv" class="col-md-4 col-sm-4">
+									<label for="hiBranch" class="required">
+										<span class="field-name" th:utext="#{i18n.branchlentic_caption}">BranchLentic</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+											type="text" id="hiBranch" name="hiBranch" list="allbranches" class="input-sm"
+											required="required"
+											data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allbranches">
+									</datalist>
+								</div>
+							</div>
+							<div id="hiStationDiv" class="row col-md-12 mrgn-bttm-md">
+								<div class="col-md-4 col-sm-5">
+									<label for="hiStationTo" class="required">
+										<span class="field-name" th:utext="#{i18n.stationto_caption}">Station To</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+											type="text" id="hiStationTo" name="hiStationTo" class="input-sm"
+											list="allToStations" required="required"
+											data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allToStations">
+									</datalist>
+									<select class="input-sm fas" id="stationToAdjust"
+											name="stationToAdjust">
+										<option class='fas fa-equals' value="equal">&#xf52c;</option>
+										<option class='fas fa-minus' value="minus">&#xf068;</option>
+										<option class='fas fa-plus' value="plus">&#xf067;</option>
+									</select>
+								</div>
+								<div class="col-md-4 col-sm-5">
+									<label for="hiStationFrom" class="required">
+										<span class="field-name" th:utext="#{i18n.stationfrom_caption}">Station From</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input
+											type="text" id="hiStationFrom" name="hiStationFrom" class="input-sm"
+											list="allFromStations" required="required"
+											data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allFromStations">
+									</datalist>
+									<select class="input-sm fas"
+											id="stationFromAdjust" name="stationFromAdjust">
+										<option class='fas fa-equals' value="equal">&#xf52c;</option>
+										<option class='fas fa-minus' value="minus">&#xf068;</option>
+										<option class='fas fa-plus' value="plus">&#xf067;</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.coordinates_title}" style="color: #6A5ACD">Coordinates</h5>
+							</div>
+							<div class="col-md-6 col-sm-7 mrgn-bttm-md">
+								<label for="mapDatum">
+									<span class="field-name" th:utext="#{i18n.datum_caption}">mapDatum</span>
+								</label>
+								<br/>
+								<select
+										class="input-sm" id="mapDatum"
+										th:attr="name=${refcodelist.get('MAP_DATUM').codeType}">
+
+									<option
+											th:each="entry : ${refcodelist.get('MAP_DATUM').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'WGS-84'} ? true"></option>
+								</select>
+							</div>
+							<div class="col-md-4 col-sm-5 mrgn-bttm-md">
+								<label for="utmZone">
+									<span class="field-name" th:utext="#{i18n.utmzone_title}">utmZone</span>
+								</label>
+								<br/>
+								<select
+										class="input-sm" id="utmZone"
+										th:attr="name=${refcodelist.get('UTM_ZONE').codeType}">
+									<option value="" th:utext="#{i18n.default.select}">Select
+										One...</option>
+									<option
+											th:each="entry : ${refcodelist.get('UTM_ZONE').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'UTMZone15'} ? true"></option>
+								</select>
+							</div>
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e01">
+												<span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;E</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e01" maxlength="6"
+												   name="utm_e01" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="form-group col-md-3 col-sm-6">
+											<label for="utm_n01">
+												<span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;N</span>
+											</label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n01" maxlength="7"
+													name="utm_n01" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e02">
+												<span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;E</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e02" maxlength="6"
+												   name="utm_e02" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="form-group col-md-3 col-sm-6">
+											<label for="utm_n02">
+												<span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n02" maxlength="7"
+													name="utm_n02" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-md pull-left">
+								<div class="pad-left-col">
+									<label for="hi_location"
+										   th:utext="#{i18n.location_title}">Location</label>
+								</div>
+								<div class="col-md-8 col-sm-12">
+									<input type="text" class="input-sm"
+										   id="hi_location" name="hi_location" placeholder=""
+										   maxlength="250" style="width: 100%" />
+								</div>
+
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.logistics_title}" style="color: #6A5ACD">Logistics</h5>
+							</div>
+							<div class="row col-md-12 col-sm-4 mrgn-bttm-md">
+								<div class="col-md-4 col-sm-12">
+									<label for="hiOperator1" class="required">
+										<span class="field-name" th:utext="#{i18n.operator1_caption}">Operator 1</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<select class="input-sm" id="hiOperator1"
+										name="hiOperator1" required="required">
+										<option value="" th:utext="#{i18n.default.select}">Select
+											One...</option>
+										<option
+											th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+									</select>
+								</div>
+								<div class="col-md-4 col-sm-12">
+									<label for="hiOperator2">
+										<span class="field-name" th:utext="#{i18n.operator2_caption}">Operator 2</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="hiOperator2"
+										name="hiOperator2">
+										<option value="" th:utext="#{i18n.default.select}">Select
+											One...</option>
+										<option
+											th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+									</select>
+								</div>
+								<div class="col-md-4 col-sm-12">
+									<label for="hiOperator3">
+										<span class="field-name" th:utext="#{i18n.operator3_caption}">Operator 3</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="hiOperator3"
+										name="hiOperator3">
+										<option value="" th:utext="#{i18n.default.select}">Select
+											One...</option>
+										<option
+											th:each="entry : ${refcodelist.get('OPERATORS').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="row col-md-12 col-sm-4 mrgn-bttm-md">
+								<div class="col-md-4 col-sm-12">
+									<label for="hiOperUnit">
+										<span class="field-name" th:utext="#{i18n.hi_operunit_caption}">Operating Unit</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="hiOperUnit"
+											th:attr="name=${refcodelist.get('OPERATING_UNIT').codeType}">
+										<option value="" th:utext="#{i18n.default.select}">Select
+											One...</option>
+										<option
+												th:each="entry : ${refcodelist.get('OPERATING_UNIT').codeValues}"
+												th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+									</select>
+								</div>
+								<div class="col-md-4 col-sm-12">
+									<label for="hiMeasure">
+										<span class="field-name" th:utext="#{i18n.hi_measurements_caption}">Habitat Measurements</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="hiMeasure"
+											th:attr="name=${refcodelist.get('HI_MEASUREMENTS').codeType}">
+										<option
+												th:each="entry : ${refcodelist.get('HI_MEASUREMENTS').codeValues}"
+												th:value="${entry.codeName}" th:utext="${entry.showText}"
+												th:attr="selected=${entry.codeName == '2'} ? true"></option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row" id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-rght-sm pull-left"
+					th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_HABITAT_INVENTORY')}__}">Save</button>
+				<button id="button_transect" type="button" disabled="true"
+					class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+					th:utext="#{i18n.button_transect_caption}">Transect</button>
+				<button id="button_exit" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm pull-left"
+					th:utext="#{i18n.button_exit_caption}">Exit</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/habitatinventory/edit.js}"></script>
+	</th:block>
+</body>
+</html>

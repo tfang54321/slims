@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.hi.transect.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theHI = /*[[${referhi}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referhi_id"
+					th:attr="value=${referhi != null} ? ${referhi.id}" />
+
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.hi_title} + ' - ' + #{i18n.hi_title.transect} + '</b>'">
+										Habitat Inventory - Transect</p>
+								</div>
+								<div class="col-md-3 col-sm-6">
+									<label for="sampleCode">
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${referhi != null} ? ${referhi.sample.sampleCode}"
+										readonly="true" />
+								</div>
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input
+										type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"	readonly="true">
+<!-- 									<input
+										type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${referhi != null} ? ${referhi.sample.sampleStatus}"
+										readonly="true"> -->
+								</div>
+								<div class="col-md-3 col-sm-6">
+									<label for="transectId">
+										<span class="field-name" th:utext="#{i18n.field_transect_id_caption}">Transect ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="transectId"
+										name="transectId"
+										th:attr="value=${referhi != null} ? ${referhi.transectId}"
+										readonly="true" />
+								</div>
+								<div class="col-md-3 col-sm-6">
+									<label for="inventoryDate">
+										<span class="field-name" th:utext="#{i18n.inventory_date_title}">Inventory Date</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="inventoryDate"
+										name="inventoryDate"
+										th:attr="value=${referhi != null} ? ${referhi.inventoryDate}"
+										readonly="true">
+								</div>
+							</div>
+						</div>
+
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{page.hi.transect.title}" style="color: #6A5ACD">Transect</h5>
+							</div>
+							<div class="row col-sm-12">
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="stream_width">
+										<span class="field-name" th:utext="#{i18n.stream_caption_width_caption}">Stream Width</span>
+										<span>&nbsp;(m)</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="stream_width"
+										name="stream_width" placeholder="" data-rule-number="true" maxlength="6" data-rule-range="[0,9999.9]"/>
+								</div>
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="transect_spacing">
+										<span class="field-name" th:utext="#{i18n.transect_spacing_caption}">Transect Spacing</span>
+										<span>&nbsp;(m)</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="transect_spacing"
+										name="transect_spacing" placeholder="" 
+										data-rule-number="true" maxlength="5" data-rule-range="[0,99.99]"/>
+								</div>
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="total_reachlen">
+										<span class="field-name" th:utext="#{i18n.total_reachlen_caption}">Total Reach Length</span>
+										<span>&nbsp;(m)</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="total_reachlen"
+										name="total_reachlen" placeholder="" 
+										data-rule-digits="true" maxlength="8" data-rule-range="[0,99999999]"/>
+								</div>
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="est_discharge">
+										<span class="field-name" th:utext="#{i18n.esti_discharge_caption}">Estimated Discharge</span>
+										<span>&nbsp;(m3/s)</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="est_discharge"
+										name="est_discharge" placeholder="" data-rule-number="true" maxlength="9" data-rule-range="[0,99999.999]"/>
+								</div>
+							</div>
+							<div class="col-sm-12 mrgn-bttm-md">
+								<label for="stream_conditions">
+									<span class="field-name" th:utext="#{i18n.stream_caption_conditions_caption}">Stream Conditions</span>
+								</label>
+								<br/>
+								<textarea id="stream_conditions" name="stream_conditions"
+									class="input-sm" rows="2" cols="80" maxlength="250"></textarea>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{page.hi.transectdetails.title}"
+									style="color: #6A5ACD">Transect Details</h5>
+							</div>
+							<div class="row col-md-10">
+								<table id="transect_details_table"
+									class=" mrgn-bttm-md"
+									style="width: 100%; border-collapse: separate;">
+<!--									border-spacing: 0 15px-->
+									<thead>
+										<tr>
+											<th class="text-center" th:utext="#{i18n.interval_id_title}">Interval
+												ID</th>
+											<th class="text-center"
+												th:utext="#{i18n.distance_leftbank_title}">Distance from
+												Left Bank(meters)</th>
+											<th class="text-center" th:utext="#{i18n.depth_title} + '(meters)'">Depth(meters)</th>
+											<th class="text-center" th:utext="#{i18n.hi_type_title}">Habitat
+												Type</th>
+											<th class="text-center icon"><a href="#" role="button" th:title="#{i18n.btn.add}"><span
+													style="font-size: 1.3em;"
+													class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="text-center"><br/><input type="text"
+												class="input-sm" value="1" readonly="true" size="4" /></td>
+											<td class="text-center"><label for="#"></label><br/><input type="text"
+												class="input-sm" name="#" placeholder=""
+												data-rule-number="true" max="9999.9999" maxlength="9"
+												size="4" /></td>
+											<td class="text-center"><label for="#"></label><br/><input type="text"
+												class="input-sm" name="#" placeholder=""
+												data-rule-number="true" max="99.9" maxlength="4" size="4" /></td>
+											<td class="text-center"><label for="#"></label><br/><input type="text"
+												class="input-sm" size="4" maxlength="3" name="#" placeholder="" max="100"
+												min="0" data-rule-digits="true" /></td>
+											<td class="text-center icon"><br/><a href="#" role="button" th:title="#{i18n.btn.remove}"><span
+													style="font-size: 1.3em;"
+													class="glyphicon glyphicon-minus-sign"
+													aria-hidden="true"></span></a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{page.hi.transectbottom.title}"
+									style="color: #6A5ACD">Bottom</h5>
+							</div>
+							<div class="col-sm-12">
+								<div class="row col-sm-12">
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_bedrock">
+											<span class="field-name" th:utext="#{i18n.bedrock_caption}">Bedrock</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_bedrock" size="4" maxlength="3"
+											name="hi_bedrock" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hardpan_clay">
+											<span class="field-name" th:utext="#{i18n.hardpan_clay_caption}">Hardpan Clay</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hardpan_clay" size="4" maxlength="3"
+											name="hardpan_clay" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="clay_sediments">
+											<span class="field-name" th:utext="#{i18n.clay_sediments_caption}">Clay Sediments</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="clay_sediments" maxlength="3"
+											size="4" name="clay_sediments" placeholder="" value="0"
+											max="100" min="0" data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_gravel">
+											<span class="field-name" th:utext="#{i18n.gravel_caption}">Gravel</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_gravel" size="4" maxlength="3"
+											name="hi_gravel" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+								</div>
+								<div class="row col-sm-12">
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_rubble">
+											<span class="field-name" th:utext="#{i18n.rubble_caption}">Rubble</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_rubble" size="4" maxlength="3"
+											name="hi_rubble" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_sand">
+											<span class="field-name" th:utext="#{i18n.sand_caption}">Sand</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_sand" size="4" maxlength="3"
+											name="hi_sand" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_silt">
+											<span class="field-name" th:utext="#{i18n.silt_caption}">Silt</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_silt" size="4" maxlength="3"
+											name="hi_silt" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="silt_detritus">
+											<span class="field-name" th:utext="#{i18n.silt_detritus_caption}">Silt/Detritus</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="silt_detritus" size="4" maxlength="3"
+											name="silt_detritus" placeholder="" value="0" max="100"
+											min="0" data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+								</div>
+								<div class="row col-sm-12 mrgn-bttm-sm">
+									<div class="row col-sm-3 mrgn-bttm-sm">
+										<label for="hi_detritus">
+											<span class="field-name" th:utext="#{i18n.detritus_caption}">Detritus</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="hi_detritus" size="4" maxlength="3"
+											name="hi_detritus" placeholder="" value="0" max="100" min="0"
+											data-rule-digits="true" /><label>&nbsp;%</label>
+									</div>
+									<div class="row col-sm-9 mrgn-bttm-sm">
+										<label for="cumulative_spawning">
+											<span class="field-name" th:utext="#{i18n.cumulative_spawning_caption}">Cumulative Spawning</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="cumulative_spawning"
+											name="cumulative_spawning" placeholder="" max="9999.9"
+											maxlength="6" data-rule-number="true" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row" id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-rght-sm pull-left"
+					th:utext="#{i18n.button_save_caption}" th:disabled="not ${__${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_HABITAT_INVENTORY')}__}">Save</button>
+				<button id="button_exit" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm pull-left"
+					th:utext="#{i18n.button_exit_caption}">Exit</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/habitatinventory/transect.js}"></script>
+	</th:block>
+</body>
+</html>

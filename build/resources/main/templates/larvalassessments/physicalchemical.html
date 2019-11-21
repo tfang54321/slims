@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.la.physicalchemical.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theLA = /*[[${referla}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referla_id"
+					th:attr="value=${referla != null} ? ${referla.id}" />
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-md-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.la_title} + ' - ' + #{i18n.la_title.physicalchemical} + '</b>'">
+										Larval Assessments - Physical/Chemical Data</p>
+								</div>
+								<div class="col-sm-4">
+									<label>
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleCode}"
+										readonly="true" />
+								</div>
+
+								<div class="col-sm-4">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleStatus}"
+										readonly="true">
+								</div>
+								<div th:replace="larvalassessments/labase :: la_nav" />
+							</div>
+						</div>
+
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.water_chemistry_title}"
+									style="color: #6A5ACD">Water Chemistry</h5>
+							</div>
+							<div class="col-sm-9 col-md-6 mrgn-bttm-md">
+								<label for="conductivity">
+									<span class="field-name" th:utext="#{i18n.field_conductivity_caption}">Conductivity:</label>
+								<br/>
+								<input type="text" class="input-sm" id="conductivity"
+									name="conductivity" placeholder="" data-rule-digits="true"
+									maxlength="4" /><label>&nbsp;µƱ</label><label for="conductivity_temp">&nbsp;at</label>
+								<input type="text" class="input-sm" id="conductivity_temp"
+									name="conductivity_temp" placeholder=""
+									data-rule-number="true" max="99.9" maxlength="4" /><label>&nbsp;&#8451;</label>
+							</div>
+							<div class="col-sm-3 col-md-6 mrgn-bttm-md">
+								<label for="conductivity_ph">PH:</label>
+								<br/>
+								<input type="text" class="input-sm"
+									id="conductivity_ph" name="conductivity_ph" placeholder=""
+									data-rule-number="true" max="99.99" maxlength="5" />
+							</div>
+							<div class="col-md-12 col-sm-12 mrgn-bttm-md">
+								<label>
+									<span class="field-name" th:utext="#{i18n.water_temp_title}">Water Temperature</span>
+								</label>
+								<br/>
+								<div class="col-sm-12">
+									<div class="col-sm-6 col-md-4">
+										<label for="surface_temp">
+											<span class="field-name" th:utext="#{i18n.field_surface_caption}">Surface</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="surface_temp"
+											   name="surface_temp" placeholder="" data-rule-number="true"
+											   max="99.9" maxlength="4" /><label>&nbsp;&#8451;</label>
+									</div>
+									<div class="row col-sm-6 col-md-4">
+										<label for="bottom_temp">
+											<span class="field-name" th:utext="#{i18n.field_bottom_caption}">Bottom</span>
+										</label>
+										<br/>
+										<input type="text" class="input-sm" id="bottom_temp"
+											   name="bottom_temp" placeholder="" data-rule-number="true"
+											   max="99.9" maxlength="4" /><label>&nbsp;&#8451;</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm">
+							<div class="row col-md-4 col-sm-6">
+								<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+									<h5 class="remove_margin" th:utext="#{i18n.larval_assessment_title}"
+										style="color: #6A5ACD">Larval Assessment</h5>
+								</div>
+								<div class="col-md-12 mrgn-bttm-md">
+									<label for="mean_depth">
+										<span class="field-name" th:utext="#{i18n.field_meandepth_caption}">Mean Depth</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="mean_depth"
+										name="mean_depth" placeholder="" data-rule-number="true"
+										min="0" max="99.9" maxlength="4" /><label>&nbsp;m</label>
+								</div>
+								<div class="col-md-12 mrgn-bttm-md">
+									<label for="mean_stream_width">
+										<span class="field-name" th:utext="#{i18n.field_meanstreamwidth_caption}">Mean Stream Width</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="mean_stream_width"
+										name="mean_stream_width" placeholder=""
+										data-rule-number="true" min="0" max="9999.9" maxlength="6" /><label>&nbsp;m</label>
+								</div>
+							</div>
+							<div class="row col-md-4 col-sm-6">
+								<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+									<h5 class="remove_margin" th:utext="#{i18n.discharge_title}" style="color: #6A5ACD">Discharge</h5>
+								</div>
+								<div class="col-md-12 mrgn-bttm-md">
+									<label for="discharge">
+										<span class="field-name" th:utext="#{i18n.discharge_title}">Discharge</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="discharge"
+										name="discharge" placeholder="" data-rule-number="true"
+										min="0" max="99999.999" maxlength="9" /><label>&nbsp;m3/sec</label>
+								</div>
+								<div class="col-md-12 mrgn-bttm-md">
+									<label for="laMethod">
+										<span class="field-name" th:utext="#{i18n.method_title}">Method</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="laMethod"
+										th:attr="name=${refcodelist.get('DISCHARGE_CODE').codeType}">
+										<option
+											th:each="entry : ${refcodelist.get('DISCHARGE_CODE').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'E'} ? true"></option>
+									</select>
+								</div>
+							</div>
+							<div class="row col-md-4 col-sm-6">
+								<div class="row col-sm-12 mrgn-tp-md mrgn-bttm-sm mrgn-left-sm">
+									<h5 class="remove_margin" th:utext="#{i18n.habitat_title}" style="color: #6A5ACD">Habitat</h5>
+								</div>
+								<div class="col-md-12 mrgn-bttm-md">
+									<label>
+										<span class="field-name" th:utext="'&nbsp;&nbsp;&nbsp;' + #{i18n.turbidity_title}">Turbidity</span>
+									</label>
+									<br/>
+									<div class="radio-inline" id="radios_turbidity">
+										<label class="radio-inline"> <input type="radio"
+											id="radio_low" name="optradio_turbidity" checked="checked"
+											value="low" th:utext="#{i18n.low_title}" />
+										</label> <label class="radio-inline"> <input type="radio"
+											id="radio_medium" name="optradio_turbidity" value="medium"
+											th:utext="#{i18n.medium_title}" />
+										</label> <label class="radio-inline"> <input type="radio"
+											id="radio_high" name="optradio_turbidity" value="high"
+											th:utext="#{i18n.high_title}" />
+										</label> <label class="radio-inline"> <input type="radio"
+											id="radio_na" name="optradio_turbidity" value="na"
+											th:utext="#{i18n.na_title}" checked="checked" />
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+					th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LARVAL_ASSESSMENTS')}__}">Save</button>
+				<button id="button_continue" type="button" disabled="true"
+					class="btn btn-success mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_continue_caption}">Continue</button>
+				<button id="button_exit" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_exit_caption}">Exit</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/larvalassessments/physicalchem.js}"></script>
+	</th:block>
+</body>
+</html>

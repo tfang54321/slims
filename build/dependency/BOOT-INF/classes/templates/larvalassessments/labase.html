@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html class="no-js" th:lang="${pageLang.substring(0, 2)}" dir="ltr"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+</head>
+<body>
+	<div th:fragment="la_nav" th:remove="tag">
+		<div id="goto" class="col-sm-4">
+			<label for="gotoMenu">
+				<span class="field-name" th:utext="#{i18n.goto_caption}">Go to</span>
+			</label>
+			<br/>
+			<select id="gotoMenu"
+				name="gotoMenu"
+				onchange="gotoLAPage(this.options[this.selectedIndex].value)">
+				<option value=""></option>
+				<option value="laList">Larval Assessment List</option>
+				<option value="laMain">Main</option>
+				<option value="electroFishing">Electrofishing Details</option>
+				<option value="granularBayer">Granular Bayer Details</option>
+				<option value="physicalChem">Physical/Chemical Data</option>
+				<option value="colcon">Collection Conditions</option>
+				<option value="fishObserCol">Fish Observed/Collected
+					Summary</option>
+			</select>
+		</div>
+	</div>
+</body>
+</html>

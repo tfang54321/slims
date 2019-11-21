@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.la.granularbayer.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var theLA = /*[[${referla}]]*/;
+        /*]]>*/
+    </script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<input type="hidden" value="#" id="referla_id"
+					th:attr="value=${referla != null} ? ${referla.id}" />
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-md-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.la_title} + ' - ' + #{i18n.la_title.collectioncon} + '</b>'">
+										Larval Assessments - Collection Conditions</p>
+								</div>
+								<div class="col-sm-4">
+									<label>
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleCode}"
+										readonly="true" />
+								</div>
+
+								<div class="col-sm-4">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${referla != null} ? ${referla.sample.sampleStatus}"
+										readonly="true">
+								</div>
+								<div th:replace="larvalassessments/labase :: la_nav" />
+							</div>
+						</div>
+						<div class="row brdr-bttm mrgn-tp-md">
+							<div class="row col-md-4 mrgn-bttm-sm">
+								<label
+									th:utext="'&nbsp;&nbsp;&nbsp;' + #{i18n.general_condition_title}">General Conditions:
+								</label>
+								<br/>
+								<div class="radio-inline" id="radios_genconditions">
+									<label class="radio-inline"> <input type="radio"
+										id="radio_gc_good" name="optradio_gencon" value="good"
+										th:utext="#{i18n.good_title}" />
+									</label> <label class="radio-inline"> <input type="radio"
+										id="radio_gc_fair" name="optradio_gencon" value="fair"
+										th:utext="#{i18n.fair_title}" />
+									</label> <label class="radio-inline"> <input type="radio"
+										id="radio_gc_poor" name="optradio_gencon" value="poor"
+										th:utext="#{i18n.poor_title}" />
+									</label> </label> <label class="radio-inline"> <input type="radio"
+										id="radio_gc_na" name="optradio_gencon" checked="checked"
+										value="na" th:utext="#{i18n.na_title}" />
+									</label>
+								</div>
+							</div>
+							<div class="row col-md-6 mrgn-bttm-sm">
+								<label for="condition_detail">
+									<span class="field-name" th:utext="#{i18n.details_caption}">Details</span>
+								</label>
+								<br/>
+								<textarea id="condition_detail" name="condition_detail"
+									class="input-sm" rows="3" cols="80" th:attr="data-maxlength=${'1000'}"></textarea>
+							</div>
+							<div class="row col-md-4 mrgn-bttm-sm">
+								<label
+									th:utext="'&nbsp;&nbsp;&nbsp;' + #{i18n.effectiveness_title}">Effectiveness:
+								</label>
+								<br/>
+								<div class="radio-inline" id="radios_effectiveness">
+									<label class="radio-inline"> <input type="radio"
+										id="radio_ef_good" name="optradio_effectiveness" value="good"
+										th:utext="#{i18n.good_title}" />
+									</label> <label class="radio-inline"> <input type="radio"
+										id="radio_ef_fair" name="optradio_effectiveness" value="fair"
+										th:utext="#{i18n.fair_title}" />
+									</label> <label class="radio-inline"> <input type="radio"
+										id="radio_ef_poor" name="optradio_effectiveness" value="poor"
+										th:utext="#{i18n.poor_title}" />
+									</label> </label> <label class="radio-inline"> <input type="radio"
+										id="radio_ef_na" name="optradio_effectiveness"
+										checked="checked" value="na" th:utext="#{i18n.na_title}" />
+									</label>
+								</div>
+							</div>
+							<div class="row col-md-6 mrgn-bttm-sm">
+								<label for="effectiveness_detail">
+									<span class="field-name" th:utext="#{i18n.details_caption}">Details</span>
+								</label>
+								<br/>
+								<textarea id="effectiveness_detail" name="effectiveness_detail"
+									class="input-sm" rows="3" cols="80"  th:attr="data-maxlength=${'1000'}"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+					th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_LARVAL_ASSESSMENTS')}__}">Save</button>
+				<button id="button_continue" type="button"
+					class="btn btn-success mrgn-lft-sm mrgn-rght-sm" disabled="true"
+					th:utext="#{i18n.button_continue_caption}">Continue</button>
+				<button id="button_exit" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_exit_caption}">Exit</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/larvalassessments/colcondition.js}"></script>
+	</th:block>
+</body>
+</html>

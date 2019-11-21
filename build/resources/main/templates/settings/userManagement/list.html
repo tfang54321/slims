@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.settings.user_mgmt.users}"></title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<th:block layout:fragment="content">
+    <br />
+    <div class="row">
+        <div class="col-sm-6">
+            <span class="h3" th:utext="#{page.settings.user_mgmt.users}">Users</span>
+        </div>
+        <div class="col-sm-6 text-right">
+            <a class="btn btn-default" th:href="@{/__${pageLang+T(ca.gc.dfo.slims.constants.PagePathes).USER_MANAGEMENT_CREATE_PATH}__}">
+                <span th:utext="#{btn.create}"></span> <span class="glyphicon glyphicon-plus"></span>
+            </a>
+            <a class="btn btn-info btn-lg" th:href="@{/__${pageLang+T(ca.gc.dfo.slims.constants.PagePathes).USER_MANAGEMENT_ALL_REPORT_PATH}__}">
+                <span th:utext="#{btn.audit.report}"></span> <span class="glyphicon glyphicon-record"></span>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="user-container">
+            <hr />
+            <section th:if="${successMessage != null}" class="alert alert-success" onclick="$(this).hide()">
+                <p th:utext="${successMessage}"></p>
+            </section>
+            <table class="wb-tables table table-striped table-hover" id="userManagementTable" data-wb-tables='
+                    {"ajax": {"url": "data","dataSrc": "userList"},
+                     "order": [[0, "desc"]],
+                     "columns" : [
+                        {"data": "userId"}
+                        ,{"data": "fullname"}
+                        ,{"data": "ntPrincipal"}
+                        ,{"data":"buttons", "orderable": false}]
+                    }'>
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th th:utext="#{i18n.name_caption}">Name</th>
+                    <th th:utext="#{i18n.username_caption}">Username</th>
+                    <th th:utext="#{i18n.actions_caption}">Action(s)</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:inline="javascript">
+        var editPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.slims.constants.PagePathes).USER_MANAGEMENT_EDIT_PATH}__}]]*/'';
+        var activatePath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.slims.constants.PagePathes).USER_MANAGEMENT_ACTIVATE_PATH}__}]]*/'';
+    </script>
+    <script th:src="@{/js/settings/userManagement.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

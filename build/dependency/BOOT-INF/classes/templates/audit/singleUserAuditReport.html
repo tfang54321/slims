@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<script src="/js/datatable.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script th:inline="javascript">
+/*<![CDATA[*/
+   
+    var userID =/*[[${userID}]]*/ ;
+   
+/*]]>*/
+</script>
+
+    <title th:utext="#{page.settings.user_mgmt.audit.user}"></title>  
+   
+ 
+</head>
+<body>
+<th:block layout:fragment="content">
+    <br />
+    <div class="row">
+        <div class="col-sm-6">
+             <span class="h3" th:utext="#{page.settings.user_mgmt.audit.user}">User</span><th>(ID=</th><th th:text="${userID}"/><th>)Audit Report</th>
+         </div>
+         <div>
+				<button style="float: right;" onclick="myFunction()">
+					<span class="h3"
+					th:utext="#{i18n.button.download}">PDF</span><i class="fa fa-download"></i>
+				</button>
+			</div>
+     </div>
+    <div class="row">
+        <div class="col-md-12" id="user-container">
+            <hr />
+
+            <table class="wb-tables table table-striped table-hover"
+                   id="singleUserManagementReportTable" data-wb-tables='
+                      {
+                         "order": [[0, "desc"]]
+                      }'>
+                <thead>
+                <tr>
+                    <th th:utext="#{i18n.audit.report.rev}">REV</th>
+                    <th th:utext="#{i18n.audit.report.auditDate}">Date</th>
+                    <th th:utext="#{i18n.audit.report.auditTime}">Time</th>
+                    <th th:utext="#{i18n.audit.report.userName}">User Name</th>
+                    <th th:utext="#{i18n.audit.report.actionName}"> Action Name</th>
+                    <th th:utext="#{i18n.audit.report.elementName_audit}">Field Name</th>
+                    <th th:utext="#{i18n.audit.report.newValue}">New Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="audit: ${userAuditReportList}">
+                    <td th:text="${audit.rev}"/>
+                    <td th:text=" ${audit.auditDate} "/>
+                    <td th:text=" ${audit.auditTime} "/>
+                    <td th:text=" ${audit.userName}  "/>
+                    <td th:text=" ${audit.actionName} "/>
+                    <td th:text=" ${audit.elementName_audit} "/>
+                    <td th:text="  ${audit.newValue} "/>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+ 
+
+   
+
+</th:block>
+
+<th:block layout:fragment="scripts">
+
+<script src="/js/datatable.js"></script>
+
+    <script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+    <script th:src="@{/js/settings/auditReport.js}" type="text/javascript"></script>
+</th:block>
+
+</body>
+</html>
+

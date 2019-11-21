@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{page.tr.secondary.singleapp.title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<script th:inline="javascript">
+	        /*<![CDATA[*/
+	        var theTR = /*[[${refertr}]]*/;
+	        var theTrSecondApp = /*[[${referTrSecondApp}]]*/;
+	        var tfmList = /*[[${lpslist.get('TFM Liquid')}]]*/;
+	        var wpList = /*[[${lpslist.get('GB')}]]*/;
+	        var allthestations = /*[[${allstationslist}]]*/;
+	        /*]]>*/
+</script>
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<div class="wb-frmvld col-md-12">
+					<form id="edit_form" class="form-horizontal" role="form">
+						<div class="row brdr-bttm">
+							<div class="row col-sm-12 mrgn-bttm-md">
+								<div class="row col-sm-12">
+									<p class="lead" th:utext="'<b>' + #{i18n.tr_title} + ' - ' + #{page.tr.secondaryapp.title.singleapp} + '</b>'">
+										Treatments - Single Secondary Application</p>
+								</div>
+								<div class="col-md-3 col-sm-4">
+									<label>
+										<span class="field-name" th:utext="#{i18n.sample_code_caption}">Sample ID</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleCode"
+										name="sampleCode"
+										th:attr="value=${refertr != null} ? ${refertr.sample.sampleCode}"
+										readonly="true" />
+								</div>
+								<div class="col-md-3 col-sm-4">
+									<label for="sampleStatus">
+										<span class="field-name" th:utext="#{i18n.sample_status_caption}">Status</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="sampleStatus"
+										name="sampleStatus"
+										th:attr="value=${refertr != null} ? ${refertr.sample.sampleStatus}"
+										readonly="true">
+								</div>
+
+								<div class="col-md-3 col-sm-4">
+									<label for="branchLentic">
+										<span class="field-name" th:utext="#{i18n.branchlentic_caption}">Branch/Lentic</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="branchLentic"
+										name="branchLentic"
+										th:attr="value=${referTrSecondApp != null} ? ${referTrSecondApp.branchLenticFrom.showText}"
+										readonly="true" />
+								</div>
+								<div class="col-md-3 col-sm-4">
+									<label for="stationFrom">
+										<span class="field-name" th:utext="#{i18n.stationfrom_caption}">Station From</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="stationFrom"
+										name="stationFrom"
+										th:attr="value=${referTrSecondApp != null} ? ${referTrSecondApp.stationFrom.showText}"
+										readonly="true">
+								</div>
+
+								<div class="col-md-3 col-sm-4">
+									<label for="treatmentDate">
+										<span class="field-name" th:utext="#{i18n.tr_date_caption}">Treatment Date</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="treatmentDate"
+										name="treatmentDate"
+										th:attr="value=${referTrSecondApp != null} ? ${referTrSecondApp.treatmentDate}"
+										readonly="true" />
+								</div>
+								<div class="col-md-3 col-sm-4">
+									<label for="time_start">
+										<span class="field-name" th:utext="#{i18n.time_start_caption}">Time Start</span>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="time_start"
+										name="time_start"
+										th:attr="value=${referTrSecondApp != null} ? ${referTrSecondApp.timeStart}"
+										readonly="true" />
+								</div>
+							</div>
+						</div>
+						<div class="row brdr-bttm mrgn-tp-md">
+							<div class="row col-sm-12">
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="trBranch_to" class="required">
+										<span class="field-name" th:utext="#{i18n.branchlentic_to_title}">Branch/Lentic To</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input type="text" id="trBranch_to" class="input-sm"
+										name="trBranch_to" list="allbranches" required="required"
+									   	data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allbranches">
+										<option th:each="entry : ${referbranchlist}"
+											th:value="${entry.showText}"><input type="hidden"
+												th:attr="value=${entry.id}" /></option>
+									</datalist>
+								</div>
+								<div id="trStationDiv" class="col-md-4 col-sm-6 mrgn-bttm-md">
+									<label for="trStationTo">
+										<span class="field-name" th:utext="#{i18n.stationto_caption}">Station To</span>
+									</label>
+									<br/>
+									<input type="text" id="trStationTo" name="trStationTo"
+										class="input-sm" list="allToStations"
+									   	data-ap-combobox="true" data-ap-auto-select-first="true" data-ap-filter-startsWith-ignore="(,)"/>
+									<datalist id="allToStations">
+									</datalist>
+									<select class=" input-sm fas" id="stationToAdjust"
+										name="stationToAdjust">
+										<option class='fas fa-equals' value="equal">&#xf52c;</option>
+										<option class='fas fa-minus' value="minus">&#xf068;</option>
+										<option class='fas fa-plus' value="plus">&#xf067;</option>
+									</select>
+								</div>
+								<div class="col-md-5 col-sm-12 mrgn-bttm-md">
+									<label for="tr_duration" class="required">
+										<span class="field-name" th:utext="#{i18n.tr_duration_caption}">Duration</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<input type="text" class="input-sm" id="tr_duration"
+										   required="required" name="tr_duration" placeholder="hh:mm"
+										   maxlength="5"
+										   pattern="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$" /><label>&nbsp;hours:minutes</label>
+								</div>
+							</div>
+							<div class="row col-sm-12">
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="app_code" class="required">
+										<span class="field-name" th:utext="#{i18n.tr_appcode_caption}">Application Code</span>
+										<strong class="required" th:utext="#{form.required}">(required)</strong>
+									</label>
+									<br/>
+									<select class="input-sm" id="app_code"
+										required="required"
+										th:attr="name=${refcodelist.get('SECONDARY_APPLICATION_CODE').codeType}">
+										<option value=""></option>
+										<option
+											th:each="entry : ${refcodelist.get('SECONDARY_APPLICATION_CODE').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'SU'} ? true"></option>
+									</select>
+								</div>
+								<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+									<label for="app_method">
+										<span class="field-name" th:utext="#{i18n.tr_appmethod_caption}">Application Method</span>
+									</label>
+									<br/>
+									<select class="input-sm" id="app_method"
+										th:attr="name=${refcodelist.get('SECONDARY_APPLICATION_METHOD').codeType}">
+										<option value=""></option>
+										<option
+											th:each="entry : ${refcodelist.get('SECONDARY_APPLICATION_METHOD').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"></option>
+									</select>
+								</div>
+								<div class="col-md-6 col-sm-12">
+									<label for="tr_location">
+										<span class="field-name" th:utext="#{i18n.location_title}">Location</span>
+									</label>
+									<br/>
+									<textarea id="tr_location" name="tr_location"
+										class="input-sm" rows="2" cols="60" maxlength="250"></textarea>
+								</div>
+							</div>
+
+							<div class="row col-sm-12 mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin"
+									th:utext="#{i18n.geolocation_title}" style="color: #6A5ACD">Geographic Location</h5>
+							</div>
+							<div class="col-sm-7 col-md-6 mrgn-bttm-sm">
+								<label for="mapDatum">
+									<span class="field-name" th:utext="#{i18n.datum_caption}">mapDatum</span>
+								</label>
+								<br/>
+								<select
+										class="input-sm" id="mapDatum"
+										th:attr="name=${refcodelist.get('MAP_DATUM').codeType}">
+
+									<option
+											th:each="entry : ${refcodelist.get('MAP_DATUM').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'WGS-84'} ? true"></option>
+								</select>
+							</div>
+							<div class="row col-sm-4 mrgn-bttm-sm">
+								<label for="utmZone">
+									<span class="field-name" th:utext="#{i18n.utmzone_title}">utmZone</span>
+								</label>
+								<br/>
+								<select
+										class="input-sm" id="utmZone"
+										th:attr="name=${refcodelist.get('UTM_ZONE').codeType}">
+									<option value="" th:utext="#{i18n.default.select}">Select One...</option>
+									<option
+											th:each="entry : ${refcodelist.get('UTM_ZONE').codeValues}"
+											th:value="${entry.codeName}" th:utext="${entry.showText}"
+											th:attr="selected=${entry.codeName == 'UTMZone15'} ? true"></option>
+								</select>
+							</div>
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e01">
+												<span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;E</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e01" maxlength="6"
+												   name="utm_e01" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_n01">
+												<span class="field-name">1.UTM&nbsp;&nbsp;&nbsp;N</span>
+											</label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n01" maxlength="7"
+													name="utm_n01" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e02">
+												<span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;E</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e02" maxlength="6"
+												   name="utm_e02" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_n02">
+												<span class="field-name">2.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n02" maxlength="7"
+													name="utm_n02" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e03">
+												<span class="field-name">3.UTM&nbsp;&nbsp;&nbsp;E</span></label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e03" maxlength="6"
+												   name="utm_e03" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_n03">
+												<span class="field-name">3.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n03" maxlength="7"
+													name="utm_n03" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+
+										<div class="col-md-3 col-sm-6">
+											<label for="utm_e04">
+												<span class="field-name">4.UTM&nbsp;&nbsp;&nbsp;E</span></label>
+											<br/>
+											<input type="text" class="input-sm" id="utm_e04" maxlength="6"
+												   name="utm_e04" placeholder="" data-rule-number="true"
+												   data-rule-range="[250000,750000]" />
+										</div>
+										<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+											<label for="utm_n04">
+												<span class="field-name">4.UTM&nbsp;&nbsp;&nbsp;N</span></label>
+											<br/>
+											<input
+													type="text" class="input-sm" id="utm_n04" maxlength="7"
+													name="utm_n04" placeholder="" data-rule-number="true"
+													data-rule-range="[4500000,5500000]" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row col-sm-12 mrgn-tp-sm mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.tfm_bars_title}" style="color: #6A5ACD">TFM - Bars</h5>
+							</div>
+
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+
+										<div class="col-md-3 col-sm-6">
+											<label for="numof_bars">
+												<span class="field-name" th:utext="#{i18n.numof_bars_caption}">Number of Bars</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm tfm" id="numof_bars" size="5"
+												   name="numof_bars" placeholder="" max="999.99" min="0"
+												   data-rule-number="true" maxlength="6"/>
+										</div>
+
+										<div class="col-md-3 col-sm-6">
+											<label for="weightof_bars">
+												<span class="field-name" th:utext="#{i18n.weightof_bars_caption}">Weight of Bars</span>
+												<span>&nbsp;(kg)</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm tfm" id="weightof_bars" size="5"
+												   name="weightof_bars" placeholder="" max="9.999" min="0"
+												   value="0.9" data-rule-number="true" maxlength="5"/>
+										</div>
+
+										<div class="col-md-3 col-sm-6">
+											<label for="tfm_perc_ai">
+												<span class="field-name"
+													  th:utext="#{i18n.percent_ai_title}">% A.I.</span>
+											</label>
+											<br/>
+											<select class=" input-sm tfm" id="tfm_perc_ai" name="tfm_perc_ai">
+												<option value=""></option>
+												<option th:each="entry : ${refcodelist.get('TFM_PERCAI').codeValues}"
+														th:value="${entry.codeName}" th:utext="${entry.showText}"
+												</option>
+											</select>
+										</div>
+
+										<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+											<label for="kg_ai">
+												<span class="field-name" th:utext="#{i18n.kg_ai_title}">kg A.I.</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="kg_ai" name="kg_ai"
+												   size="5" placeholder="" readonly="true"/>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="row col-sm-12 mrgn-tp-sm mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin" th:utext="#{i18n.tfm_liquid_title}" style="color: #6A5ACD">TFM - Liquid</h5>
+							</div>
+
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+
+										<div class="col-md-3 col-sm-6">
+											<label for="tfmlps">
+												<span class="field-name"
+													  th:utext="#{i18n.batch_year_company_title}">Batch|Year|Company</span>
+											</label>
+											<br/>
+											<select class="input-sm" id="tfmlps" name="TFM">
+												<option value="" th:utext="#{i18n.default.select}"></option>
+												<option th:each="entry : ${lpslist.get('TFM Liquid')}"
+														th:value="${entry.id}" th:utext="${entry.showText}"></option>
+											</select>
+										</div>
+
+										<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+											<label for="litersUsed">
+												<span class="field-name"
+													  th:utext="#{i18n.liters_used_title}">Liters Used</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" placeholder="" id="litersUsed"
+												   name="litersUsed"
+												   data-rule-number="true" min="0" max="9999999.99" size="5"
+												   maxlength="10"/>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="row col-sm-12 mrgn-tp-sm mrgn-bttm-sm mrgn-left-sm">
+								<h5 class="remove_margin"
+									th:utext="#{i18n.gb_title}" style="color: #6A5ACD">Granular Bayluscide</h5>
+							</div>
+							<div class="row mrgn-tp-md">
+								<div class="pad-left-col">
+									<div class="form-inline">
+
+										<div class="col-md-3 col-sm-6">
+											<label for="amount_used">
+												<span class="field-name"
+													  th:utext="#{i18n.amount_used_title}">Amount Used</span>
+												<span>&nbsp;(kg)</span>
+											</label>
+											<br/>
+											<input type="text" class="input-sm" id="amount_used" size="5"
+												   name="amount_used" placeholder="" max="9999999.99" min="0"
+												   data-rule-number="true" maxlength="10"/>
+										</div>
+										<div class="col-md-3 col-sm-6 mrgn-bttm-md">
+											<label for="gb_perc_ai">
+												<span class="field-name" th:utext="#{i18n.percent_ai_title}">% A.I.</span>
+											</label>
+											<br/>
+											<select class="input-sm" id="gb_perc_ai" name="gb_perc_ai">
+												<option value=""></option>
+												<option th:each="entry : ${refcodelist.get('GB_PERCAI').codeValues}"
+														th:value="${entry.codeName}" th:utext="${entry.showText}"
+												</option>
+											</select>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="displayMessage"></div>
+			<div class="row pull-left mrgn-tp-md mrgn-left-lg mrgn-bttm-sm">
+				<button id="button_save" type="button"
+					class="btn btn-success mrgn-left-lg mrgn-rght-sm"
+					th:utext="#{i18n.button_save_caption}" th:disabled="${not __${T(ca.gc.dfo.slims.config.SecurityHelper).TH_EL('EL_MODIFY_TREATMENTS')}__}">Save</button>
+				<button id="button_induced_mortality" type="button" disabled="true"
+					class="btn btn-success mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_induced_mortality_caption}">Induced
+					Mortality</button>
+				<button id="button_return_summary" type="button"
+					class="btn btn-primary mrgn-lft-sm mrgn-rght-sm"
+					th:utext="#{i18n.button_return_summary_caption}">Return to
+					Summary</button>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+		
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/treatments/singlesecondaryapp.js}"></script>
+	</th:block>
+</body>
+</html>

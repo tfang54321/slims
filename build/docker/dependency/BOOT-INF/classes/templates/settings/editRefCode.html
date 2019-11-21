@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+<title th:utext="#{i18n.code_details_title}"></title>
+<th:block th:replace="layout/base :: shared_css" />
+<!-- <script th:inline="javascript">
+        /*<![CDATA[*/
+           var theCode = /*[[${refercode}]]*/;
+        /*]]>*/
+    </script> -->
+</head>
+<body onload="loaderControl();">
+	<th:block layout:fragment="content">
+		<div class="container">
+			<div class="row mrgn-tp-md mrgn-bttm-md mrgn-rght-sm">
+				<div class="col-md-12">
+					<div id="section_title">
+						<p class="lead"
+							th:utext="'<b>' + #{i18n.code_details_title} + '</b>'">Code
+							Details</p>
+					</div>
+					<div id="refer_code">
+						<p id="input_code">
+							<b th:utext="#{i18n.code_type_title} + ': '">Code Type: </b>
+							<mark th:utext="${referCodeType}" class="bg-info">#</mark>
+						</p>
+					</div>
+					<input type="hidden" id="refercode_type"
+						th:attr="value=${referCodeType != null} ? ${referCodeType}" />
+					<table id="details_table"
+						class="wb-tables table list-table table-hover table-bordered"
+						style="width: 100%">
+						<thead>
+							<th th:utext="#{i18n.code_value_title}">Code Value</th>
+							<th th:utext="#{i18n.code_endes_title}">English Description</th>
+							<th th:utext="#{i18n.code_frdes_title}">French Description</th>
+							<th th:utext="#{i18n.code_abbreviation_title}">Code
+								Abbreviation</th>
+							<th></th>
+						</thead>
+					</table>
+					<div id="displayInfoMessage"></div>
+					<section th:if="${successMessage != null}"
+						class="alert alert-success" onclick="$(this).hide()">
+						<p th:utext="${successMessage}"></p>
+					</section>
+					<div class="pull-left mrgn-tp-md mrgn-bttm-sm">
+						<button id="button_add" type="button"
+							class="btn btn-success mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_add_caption}">Add</button>
+						<button id="button_edit" type="button"
+							class="btn btn-success mrgn-lft-sm mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_edit_caption}">Edit</button>
+						<button id="button_exit" type="button"
+							class="btn btn-primary mrgn-lft-sm mrgn-rght-sm pull-left"
+							th:utext="#{i18n.button_exit_caption}">Exit</button>
+					</div>
+				</div>
+				<div id="code_form" hidden="true"
+					class="wb-frmvld col-md-12 brdr-tp mrgn-tp-md mrgn-bttm-sm mrgn-lft-sm mrgn-rght-sm background-light">
+					<h4 th:utext="#{i18n.add_edit_code_title}">Add/Edit RefCode</h4>
+					<form id="edit_form" class="form-horizontal mrgn-tp-md" role="form">
+						<input type="hidden" value="#" id="code_id" />
+						<div class="form-group pad-left-col">
+							<label for="codeValue" class="required"> <span
+								class="field-name" th:utext="#{i18n.code_value_title}">Code
+									Value</span> <strong class="required" th:utext="#{form.required}"></strong>
+							</label> <br /> <input type="text" class="input-sm" id="codeValue"
+								name="codeValue" placeholder="" required="required"
+								data-rule-alphanumeric="true" maxlength="30" minlength="1"
+								pattern="[A-Za-z0-9_]{1,}" />
+						</div>
+						<div class="form-group pad-left-col">
+							<label for="desEn" class="required"> <span
+								class="field-name" th:utext="#{i18n.en_description_title}">English
+									Description</span> <strong class="required"
+								th:utext="#{form.required}"></strong>
+							</label> <br /> <input type="text" class="input-sm pull-left" id="desEn" size="100"
+								name="desEn" placeholder="" required="required" maxlength="250" />
+						</div>
+						<div class="form-group pad-left-col">
+							<label for="desFr" class="required"> <span
+								class="field-name" th:utext="#{i18n.fr_description_title}">French
+									Description</span> <strong class="required"
+								th:utext="#{form.required}"></strong>
+							</label> <br /> <input type="text" class="input-sm pull-left" id="desFr" size="100"
+								name="desFr" placeholder="" required="required" maxlength="250" />
+						</div>
+						<div class="form-group pad-left-col mrgn-bttm-lg">
+							<label for="codeAbb"> <span class="field-name"
+								th:utext="#{i18n.code_abbreviation_title}">Code
+									Abbreviation</span>
+							</label> <br /> <input type="text" class="input-sm pull-left"
+								id="codeAbb" name="codeAbb" placeholder="" maxlength="45" />
+						</div>
+						<div th:replace="layout/base :: loc_form_buttons" />
+					</form>
+				</div>
+			</div>
+			<div th:replace="layout/base :: shared_controls" />
+		</div>
+	</th:block>
+	<!-- 	Global Layout JS -->
+	<th:block layout:fragment="scripts">
+
+		<script th:src="@{/js/commonapp.js}" type="text/javascript"></script>
+		<script th:src="@{/js/settings/editRefCode.js}" type="text/javascript"></script>
+	</th:block>
+</body>
+</html>
