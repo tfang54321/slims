@@ -18,7 +18,7 @@ stage('buildimage') {
 
 sh  "'${mvnHome}/bin/gradle'   docker"
 
- sh " docker run -p 8092:5000 springio/gs-spring-boot-docker-slims1127"
+ sh " docker run -p 8095:5000 springio/gs-spring-boot-docker-slims1127"
 
 
 }
