@@ -14,11 +14,11 @@ mvnHome = tool 'gradle61'
 
 
 stage('buildimage') {
+sh  "'${mvnHome}/bin/gradle'   artifactoryPublish"
 
+//sh  "'${mvnHome}/bin/gradle'   docker"
 
-sh  "'${mvnHome}/bin/gradle'   docker"
-
- sh " docker run -p 8095:5000 springio/gs-spring-boot-docker-slims1127"
+// sh " docker run -p 8095:5000 springio/gs-spring-boot-docker-slims1127"
 
 
 }
